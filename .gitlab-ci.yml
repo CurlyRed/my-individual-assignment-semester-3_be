@@ -11,3 +11,7 @@ test:
   stage: test
   script:
     - ./gradlew test
+  artifacts:
+    paths:
+      - build/test-results
+
