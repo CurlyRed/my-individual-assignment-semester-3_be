@@ -1,7 +1,5 @@
 package Marketplace.persistence.entity;
 
-import Marketplace.persistence.entity.LocationEntity;
-
 import lombok.Builder;
 import lombok.Data;
 
