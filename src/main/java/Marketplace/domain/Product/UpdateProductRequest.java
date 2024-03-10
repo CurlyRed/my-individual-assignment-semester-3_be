@@ -1,27 +1,29 @@
-package Marketplace.domain.Category;
-
-import Marketplace.domain.Attribute.Attribute;
+package Marketplace.domain.Product;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Map;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-
-import java.util.List;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateCategoryRequest {
+public class UpdateProductRequest {
 
-    @NotBlank
-    private String categoryName;
     @NotNull
-    private List<Attribute> attributes;
+    private Long id;
+    @NotBlank
+    private String productName;
+    @NotBlank
+    private String productDescription;
+    @NotNull
+    private Map<String, String> categoryAttributes;
 
 }
 

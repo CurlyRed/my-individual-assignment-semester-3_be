@@ -7,21 +7,18 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-
 import java.util.List;
+
+import jakarta.validation.constraints.NotNull;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateCategoryRequest {
+public class UpdateCategoryRequest {
 
-    @NotBlank
-    private String categoryName;
+    @NotNull
+    private long id;
     @NotNull
     private List<Attribute> attributes;
-
 }
-

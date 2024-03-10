@@ -1,10 +1,5 @@
 package Marketplace.persistence.entity;
 
-import Marketplace.domain.Attribute.Attribute;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import lombok.Builder;
 import lombok.Data;
 import lombok.AllArgsConstructor;
@@ -14,10 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CategoryEntity {
-
-    private Long id;
+public class AttributeEntity {
     private String name;
-    private List<AttributeEntity> attributes = new ArrayList<>();
-
+    private String type;
 }

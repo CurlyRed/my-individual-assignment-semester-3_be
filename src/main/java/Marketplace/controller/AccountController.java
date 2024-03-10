@@ -7,6 +7,7 @@ import Marketplace.domain.User.UpdateUserRequest;
 import Marketplace.domain.User.User;
 
 import lombok.AllArgsConstructor;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,10 +30,7 @@ public class AccountController {
     @GetMapping("{id}")
     public ResponseEntity<User> getUser(@PathVariable(value = "id") final long userId){
         final Optional<User> userOptional = userService.getUser(userId);
-        if (userOptional.isEmpty()){
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok().body(userOptional.get());
+        return userOptional.map(user -> ResponseEntity.ok().body(user)).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PutMapping("{id}")

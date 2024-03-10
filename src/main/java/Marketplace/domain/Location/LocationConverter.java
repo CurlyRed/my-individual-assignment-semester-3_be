@@ -1,6 +1,5 @@
 package Marketplace.domain.Location;
 
-import Marketplace.domain.Location.Location;
 import Marketplace.persistence.entity.LocationEntity;
 
 public final class LocationConverter {

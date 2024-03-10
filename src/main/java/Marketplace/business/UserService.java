@@ -8,12 +8,12 @@ import Marketplace.domain.User.User;
 import java.util.Optional;
 
 public interface UserService {
-    public CreateUserResponse createUser(CreateUserRequest request);
+    CreateUserResponse createUser(CreateUserRequest request);
 
-    public Optional<User> getUser(long userId);
+    Optional<User> getUser(long userId);
 
-    public boolean updateUser(UpdateUserRequest request);
+    boolean updateUser(UpdateUserRequest request);
 
-    public boolean deleteById(long userId);
+    boolean deleteById(long userId);
 
 }
