@@ -92,4 +92,3 @@ class ProductServiceImplTest {
         return attributeValues;
     }
 }
-
