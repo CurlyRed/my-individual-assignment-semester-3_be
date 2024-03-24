@@ -1,6 +1,7 @@
 stages:
   - build
   - test
+  - docker
 
 build:
   stage: build
@@ -14,4 +15,9 @@ test:
   artifacts:
     paths:
       - build/test-results
+
+docker:
+  stage: docker
+  script:
+    - docker build -t ias3_be .
 
