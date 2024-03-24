@@ -1,6 +1,7 @@
-package Marketplace.business.impl;
+package Marketplace.domain.Category;
 
 import Marketplace.domain.Attribute.Attribute;
+import Marketplace.domain.Attribute.AttributeConverter;
 import Marketplace.domain.Category.Category;
 import Marketplace.persistence.entity.AttributeEntity;
 import Marketplace.persistence.entity.CategoryEntity;

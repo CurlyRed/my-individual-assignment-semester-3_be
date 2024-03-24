@@ -2,13 +2,17 @@ package Marketplace.domain.Location;
 
 import Marketplace.persistence.entity.LocationEntity;
 
-public final class LocationConverter {
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import org.springframework.stereotype.Component;
 
-    private LocationConverter(){
 
-    }
+@AllArgsConstructor
+@Component
+public class LocationConverter {
 
-    public static Location convert(LocationEntity location){
+
+    public Location convert(LocationEntity location){
         return Location.builder()
                 .id(location.getId())
                 .country(location.getCountry())
@@ -17,7 +21,7 @@ public final class LocationConverter {
                 .build();
     }
 
-    public static LocationEntity convertToEntity(Location location){
+    public LocationEntity convertToEntity(Location location){
         return LocationEntity.builder()
                 .id(location.getId())
                 .country(location.getCountry())

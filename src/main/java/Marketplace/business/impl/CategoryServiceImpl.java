@@ -1,6 +1,7 @@
 package Marketplace.business.impl;
 
 import Marketplace.business.CategoryService;
+import Marketplace.domain.Attribute.AttributeConverter;
 import Marketplace.domain.Category.*;
 import Marketplace.persistence.CategoryRepository;
 
@@ -23,6 +24,9 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CreateCategoryResponse createCategory(CreateCategoryRequest request) {
+        if (request == null) {
+            return null;
+        }
         List<AttributeEntity> attributeEntities = request.getAttributes().stream()
                 .map(attributeConverter::convertToEntity)
                 .collect(Collectors.toList());
@@ -41,7 +45,6 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Optional<Category> getCategory(long categoryId){
-
         return categoryRepository.getCategory(categoryId)
                         .map(categoryConverter::convertToDomain);
     }

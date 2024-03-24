@@ -1,9 +1,7 @@
-package Marketplace.business.impl;
+package Marketplace.domain.Product;
 
-import Marketplace.domain.Product.Product;
 import Marketplace.persistence.entity.ProductEntity;
 import Marketplace.domain.Category.Category;
-import Marketplace.domain.Attribute.Attribute;
 import Marketplace.business.CategoryService;
 
 import lombok.AllArgsConstructor;
@@ -38,9 +36,10 @@ public class ProductConverter {
         product.setDescription(productEntity.getDescription());
 
         Optional<Category> categoryOptional = categoryService.getCategory(productEntity.getCategoryId());
-        Category category = categoryOptional.orElseThrow(() -> new RuntimeException("Category not found"));
-
-        product.setCategory(category);
+        if (categoryOptional.isPresent()) {
+            Category category = categoryOptional.get();
+            product.setCategory(category);
+        }
 
         for (Map.Entry<String, String> entry : productEntity.getAttributeValues().entrySet()) {
             String attributeName = entry.getKey();

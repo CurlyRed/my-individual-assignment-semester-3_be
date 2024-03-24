@@ -53,5 +53,4 @@ public class CategoryController {
         List<Category> categories = categoryService.getCategories();
         return ResponseEntity.ok().body(categories);
     }
-
 }

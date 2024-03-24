@@ -15,9 +15,14 @@ import java.util.Optional;
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final UserConverter userConverter;
+    private final LocationConverter locationConverter;
 
     @Override
     public CreateUserResponse createUser(CreateUserRequest request){
+        if (request == null) {
+            return null;
+        }
 
         UserEntity createdUser = UserEntity.builder()
                 .username(request.getUsername())
@@ -25,7 +30,7 @@ public class UserServiceImpl implements UserService {
                 .email(request.getEmail())
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
-                .location(LocationConverter.convertToEntity(request.getLocation()))
+                .location(locationConverter.convertToEntity(request.getLocation()))
                 .build();
 
         createdUser = userRepository.saveUser(createdUser);
@@ -38,7 +43,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> getUser(long userId){
 
-        return userRepository.findById(userId).map(UserConverter::convert);
+        return userRepository.findById(userId).map(userConverter::convert);
     }
 
     @Override
@@ -52,7 +57,7 @@ public class UserServiceImpl implements UserService {
             user.setEmail(request.getEmail());
             user.setFirstName(request.getFirstName());
             user.setLastName(request.getLastName());
-            user.setLocation(LocationConverter.convertToEntity(request.getLocation()));
+            user.setLocation(locationConverter.convertToEntity(request.getLocation()));
 
             userRepository.saveUser(user);
             return true;

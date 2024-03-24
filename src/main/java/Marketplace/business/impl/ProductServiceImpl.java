@@ -1,12 +1,9 @@
 package Marketplace.business.impl;
 
 import Marketplace.business.ProductService;
-import Marketplace.domain.Product.CreateProductRequest;
-import Marketplace.domain.Product.CreateProductResponse;
-import Marketplace.domain.Product.UpdateProductRequest;
+import Marketplace.domain.Product.*;
 import Marketplace.persistence.ProductRepository;
 import Marketplace.persistence.entity.ProductEntity;
-import Marketplace.domain.Product.Product;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,6 +20,10 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public CreateProductResponse createProduct(CreateProductRequest request){
+        if (request == null) {
+            return null;
+        }
+
         ProductEntity createdProduct = ProductEntity.builder()
                 .name(request.getProductName())
                 .description(request.getProductDescription())
@@ -37,6 +38,7 @@ public class ProductServiceImpl implements ProductService {
                 .categoryId(createdProduct.getCategoryId())
                 .build();
     }
+
 
     @Override
     public Optional<Product> getProduct(long productId){

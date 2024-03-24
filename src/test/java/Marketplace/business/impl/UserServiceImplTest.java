@@ -22,6 +22,12 @@ class UserServiceImplTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private LocationConverter locationConverter;
+
+    @Mock
+    private UserConverter userConverter;
+
     @InjectMocks
     private UserServiceImpl userService;
 
@@ -46,23 +52,30 @@ class UserServiceImplTest {
     }
 
     @Test
+    void createUser_NullRequest_ReturnsNull(){
+        // Given
+        CreateUserRequest request = null;
+
+        // When
+        CreateUserResponse response = userService.createUser(request);
+
+        // Then
+        assertNull(response);
+    }
+
+    @Test
     void getUser_ExistingUserId_ReturnsUser() {
         // Given
         long userId = 1L;
         UserEntity userEntity = createUserEntity();
         when(userRepository.findById(userId)).thenReturn(Optional.of(userEntity));
+        when(userConverter.convert(userEntity)).thenReturn(new User());
 
         // When
         Optional<User> userOptional = userService.getUser(userId);
 
         // Then
         assertTrue(userOptional.isPresent());
-        assertEquals(userEntity.getUsername(), userOptional.get().getUsername());
-        assertEquals(userEntity.getEmail(), userOptional.get().getEmail());
-        assertEquals(userEntity.getPassword(), userOptional.get().getPassword());
-        assertEquals(userEntity.getFirstName(), userOptional.get().getFirstName());
-        assertEquals(userEntity.getLastName(), userOptional.get().getLastName());
-        assertEquals(LocationConverter.convert(userEntity.getLocation()), userOptional.get().getLocation());
     }
 
     @Test
@@ -164,7 +177,7 @@ class UserServiceImplTest {
                 .email("test@example.com")
                 .firstName("Test")
                 .lastName("User")
-                .location(LocationConverter.convertToEntity(createLocation()))
+                .location(locationConverter.convertToEntity(createLocation()))
                 .build();
     }
 

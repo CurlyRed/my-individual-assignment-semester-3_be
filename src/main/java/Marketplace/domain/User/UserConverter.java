@@ -1,16 +1,21 @@
 package Marketplace.domain.User;
 
-import  Marketplace.domain.User.User;
 import Marketplace.persistence.entity.UserEntity;
 import Marketplace.domain.Location.LocationConverter;
 
-public final class UserConverter {
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import org.springframework.stereotype.Component;
 
-    public UserConverter(){
 
-    }
+@AllArgsConstructor
+@NoArgsConstructor
+@Component
+public class UserConverter {
 
-    public static User convert(UserEntity user){
+    private LocationConverter locationConverter;
+
+    public  User convert(UserEntity user){
         return User.builder()
                 .id(user.getId())
                 .username(user.getUsername())
@@ -18,11 +23,11 @@ public final class UserConverter {
                 .email(user.getEmail())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
-                .location(LocationConverter.convert(user.getLocation()))
+                .location(locationConverter.convert(user.getLocation()))
                 .build();
     }
 
-    public static UserEntity convertToEntity(User user){
+    public UserEntity convertToEntity(User user){
         return UserEntity.builder()
                 .id(user.getId())
                 .username(user.getUsername())
@@ -30,7 +35,7 @@ public final class UserConverter {
                 .email(user.getEmail())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
-                .location(LocationConverter.convertToEntity(user.getLocation()))
+                .location(locationConverter.convertToEntity(user.getLocation()))
                 .build();
     }
 }

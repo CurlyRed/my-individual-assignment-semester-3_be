@@ -3,10 +3,7 @@ package Marketplace.domain.Product;
 import Marketplace.domain.Attribute.Attribute;
 import Marketplace.domain.Category.Category;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +12,7 @@ import java.util.Map;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode
 public class Product {
     private Long id;
     private String name;

@@ -1,4 +1,4 @@
-package Marketplace.business.impl;
+package Marketplace.domain.Attribute;
 
 import Marketplace.domain.Attribute.Attribute;
 import Marketplace.domain.Category.Category;
