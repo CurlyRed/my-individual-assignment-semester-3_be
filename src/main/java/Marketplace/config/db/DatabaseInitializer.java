@@ -20,13 +20,13 @@ public class DatabaseInitializer{
 
     @EventListener(ApplicationReadyEvent.class)
     public void populateInitialDummyData(){
-        AttributeEntity attribute1 = AttributeEntity.builder().name("Engine").type("String").build();
-        AttributeEntity attribute2 = AttributeEntity.builder().name("Wheels").type("String").build();
-        List<AttributeEntity> attributes = new ArrayList<>();
-        attributes.add(attribute1);
-        attributes.add(attribute2);
+            AttributeEntity attribute1 = AttributeEntity.builder().name("Engine").type("String").build();
+            AttributeEntity attribute2 = AttributeEntity.builder().name("Wheels").type("String").build();
+            List<AttributeEntity> attributes = new ArrayList<>();
+            attributes.add(attribute1);
+            attributes.add(attribute2);
 
-        categoryRepository.saveCategory(CategoryEntity.builder().id(1L).name("Car").attributes(attributes).build());
+            categoryRepository.saveCategory(CategoryEntity.builder().id(1L).name("Car").attributes(attributes).build());
     }
 }
 

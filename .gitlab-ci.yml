@@ -1,7 +1,7 @@
 stages:
   - build
   - test
-  - docker
+  - deploy
 
 build:
   stage: build
@@ -16,8 +16,18 @@ test:
     paths:
       - build/test-results
 
-docker:
-  stage: docker
+deploy:
+  stage: deploy
   script:
-    - docker build -t ias3_be .
+    - |
+      if [[ "$CI_BUILD_BEFORE_SHA" == "$CI_BUILD_REF" && "$CI_COMMIT_BRANCH" == "main" ]]; then
+        docker build -t ias3_be .
+        docker run -d -p 9000:8080 --name ias_container_be ias3_be
+      else
+        echo "Skipping deployment as previous stages failed or pipeline was not triggered by the main branch."
+      fi
+  dependencies:
+    - build
+    - test
+
 
