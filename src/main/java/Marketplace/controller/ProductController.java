@@ -1,11 +1,11 @@
 package Marketplace.controller;
 
 import Marketplace.business.ProductService;
-import Marketplace.domain.Product.CreateProductRequest;
-import Marketplace.domain.Product.CreateProductResponse;
-import Marketplace.domain.Product.Product;
+import Marketplace.business.dto.product.CreateProductRequest;
+import Marketplace.business.dto.product.CreateProductResponse;
+import Marketplace.domain.Product;
 
-import Marketplace.domain.Product.UpdateProductRequest;
+import Marketplace.business.dto.product.UpdateProductRequest;
 import lombok.AllArgsConstructor;
 
 import org.springframework.http.HttpStatus;
@@ -34,16 +34,8 @@ public class ProductController {
         return productOptional.map(product -> ResponseEntity.ok().body(product)).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PutMapping("{id}")
-    public ResponseEntity<Void> updateProduct(@PathVariable long id,
-                                              @RequestBody @Valid UpdateProductRequest request){
-        request.setId(id);
-        productService.updateProduct(request);
-        return ResponseEntity.noContent().build();
-    }
-
     @DeleteMapping("{productId}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable int productId){
+    public ResponseEntity<Void> deleteProduct(@PathVariable long productId){
         productService.deleteProduct(productId);
         return ResponseEntity.noContent().build();
     }

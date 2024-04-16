@@ -2,7 +2,6 @@ stages:
   - build
   - test
   - sonarqube-check
-  - sonarqube-vulnerability-report
   - deploy
 
 build:
@@ -29,35 +28,18 @@ sonarqube-check:
     paths:
       - .sonar/cache
   script: ./gradlew sonar
-  allow_failure: true
+  allow_failure: false
   only:
     - merge_requests
     - master
     - main
     - develop
-
-sonarqube-vulnerability-report:
-  stage: sonarqube-vulnerability-report
-  script:
-    - 'curl -u ***REMOVED*** "${SONAR_HOST_URL}/api/issues/gitlab_sast_export?projectKey=***REMOVED***&branch=${CI_COMMIT_BRANCH}&pullRequest=${CI_MERGE_REQUEST_IID}" -o gl-sast-sonar-report.json'
-  allow_failure: true
-  only:
-    - merge_requests
-    - master
-    - main
-    - develop
-  artifacts:
-    expire_in: 1 day
-    reports:
-      sast: gl-sast-sonar-report.json
-  dependencies:
-    - sonarqube-check
 
 deploy:
   stage: deploy
   script:
     - |
-      if [[ "$CI_BUILD_BEFORE_SHA" == "$CI_BUILD_REF" && "$CI_COMMIT_BRANCH" == "main" ]]; then
+      if [[ "$CI_COMMIT_BRANCH" == "main" ]]; then
         # Check if the SonarQube analysis job succeeded
         sonarqube_check_status=$(curl --silent --show-error --request GET --header "PRIVATE-TOKEN: $CI_JOB_TOKEN" "$CI_API_V4_URL/projects/$CI_PROJECT_ID/pipelines/$CI_PIPELINE_ID/jobs" | jq -r '.[] | select(.name == "sonarqube-check") | .status')
         if [[ "$sonarqube_check_status" != "success" ]]; then
@@ -69,11 +51,11 @@ deploy:
         docker build -t ias3_be .
         docker run -d -p 9000:8080 --name ias_container_be ias3_be
       else
-        echo "Skipping deployment as previous stages failed or pipeline was not triggered by the main branch."
+        echo "Skipping deployment as the pipeline was not triggered by the main branch."
       fi
-  dependencies:
-    - build
-    - test
+  only:
+    - main
+
 
 
 

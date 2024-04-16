@@ -1,10 +1,10 @@
 package Marketplace.controller;
 
 import Marketplace.business.CategoryService;
-import Marketplace.domain.Category.Category;
-import Marketplace.domain.Category.CreateCategoryRequest;
-import Marketplace.domain.Category.CreateCategoryResponse;
-import Marketplace.domain.Category.UpdateCategoryRequest;
+import Marketplace.domain.Category;
+import Marketplace.business.dto.category.CreateCategoryRequest;
+import Marketplace.business.dto.category.CreateCategoryResponse;
+import Marketplace.business.dto.category.UpdateCategoryRequest;
 
 import lombok.AllArgsConstructor;
 
@@ -34,16 +34,8 @@ public class CategoryController {
         return categoryOptional.map(category -> ResponseEntity.ok().body(category)).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PutMapping("{id}")
-    public ResponseEntity<Void> updateCategory(@PathVariable("id") long id,
-                                               @RequestBody @Valid UpdateCategoryRequest request){
-        request.setId(id);
-        categoryService.updateCategory(request);
-        return ResponseEntity.noContent().build();
-    }
-
     @DeleteMapping("{categoryId}")
-    public ResponseEntity<Void> deleteCategory(@PathVariable int categoryId){
+    public ResponseEntity<Void> deleteCategory(@PathVariable long categoryId){
         categoryService.deleteCategory(categoryId);
         return ResponseEntity.noContent().build();
     }

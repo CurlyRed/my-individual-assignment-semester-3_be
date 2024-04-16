@@ -1,9 +1,9 @@
 package Marketplace.business;
 
-import Marketplace.domain.Product.CreateProductRequest;
-import Marketplace.domain.Product.CreateProductResponse;
-import Marketplace.domain.Product.Product;
-import Marketplace.domain.Product.UpdateProductRequest;
+import Marketplace.business.dto.product.CreateProductRequest;
+import Marketplace.business.dto.product.CreateProductResponse;
+import Marketplace.domain.Product;
+import Marketplace.business.dto.product.UpdateProductRequest;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,8 +12,6 @@ public interface ProductService {
     CreateProductResponse createProduct(CreateProductRequest request);
 
     Optional<Product> getProduct(long productId);
-
-    boolean updateProduct(UpdateProductRequest request);
 
     boolean deleteProduct(long productId);
 

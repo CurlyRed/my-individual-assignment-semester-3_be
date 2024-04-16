@@ -1,12 +1,21 @@
 package Marketplace.business.impl;
 
 import Marketplace.business.UserService;
-import Marketplace.domain.User.*;
-import Marketplace.persistence.UserRepository;
+import Marketplace.business.dto.user.CreateUserRequest;
+import Marketplace.business.dto.user.CreateUserResponse;
+import Marketplace.business.dto.user.UpdateUserRequest;
+import Marketplace.domain.User;
+import Marketplace.persistence.converter.UserConverter;
+import Marketplace.persistence.entity.RoleEntity;
+import Marketplace.persistence.jpaRepository.RoleRepository;
+import Marketplace.persistence.jpaRepository.UserRepository;
 import Marketplace.persistence.entity.UserEntity;
-import Marketplace.domain.Location.LocationConverter;
 
 import lombok.AllArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
+/*
+import org.springframework.security.crypto.password.PasswordEncoder;
+*/
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -15,8 +24,9 @@ import java.util.Optional;
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final UserConverter userConverter;
-    private final LocationConverter locationConverter;
+/*    private final PasswordEncoder passwordEncoder;*/
 
     @Override
     public CreateUserResponse createUser(CreateUserRequest request){
@@ -24,52 +34,59 @@ public class UserServiceImpl implements UserService {
             return null;
         }
 
-        UserEntity createdUser = UserEntity.builder()
-                .username(request.getUsername())
-                .password(request.getPassword())
+        Optional<RoleEntity> optionalRoleEntity = roleRepository.findById(request.getRoleId());
+        RoleEntity roleEntity = optionalRoleEntity.orElseThrow(() ->new IllegalArgumentException("Role not found"));
+
+/*
+        String encodedPassword = passwordEncoder.encode(request.getPassword());
+*/
+
+        UserEntity userEntity = UserEntity.builder()
                 .email(request.getEmail())
+                .password(request.getPassword())
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
-                .location(locationConverter.convertToEntity(request.getLocation()))
+                .role(roleEntity)
                 .build();
 
-        createdUser = userRepository.saveUser(createdUser);
+        userEntity = userRepository.save(userEntity);
 
         return CreateUserResponse.builder()
-                .userId(createdUser.getId())
+                .userId(userEntity.getId())
                 .build();
     }
 
     @Override
     public Optional<User> getUser(long userId){
-
-        return userRepository.findById(userId).map(userConverter::convert);
+        return userRepository.findById(userId)
+                .map(userConverter::toDomain);
     }
 
     @Override
     public boolean updateUser(UpdateUserRequest request){
-        Optional<UserEntity> userOptional = this.userRepository.findById(request.getId());
+        Optional<UserEntity> userOptional = userRepository.findById(request.getId());
 
         if (userOptional.isPresent()) {
             UserEntity user = userOptional.get();
-            user.setUsername(request.getUsername());
             user.setPassword(request.getPassword());
             user.setEmail(request.getEmail());
             user.setFirstName(request.getFirstName());
             user.setLastName(request.getLastName());
-            user.setLocation(locationConverter.convertToEntity(request.getLocation()));
 
-            userRepository.saveUser(user);
+            userRepository.save(user);
             return true;
         } else {
             return false;
         }
     }
 
-
     @Override
     public boolean deleteById(long userId){
-
-        return this.userRepository.deleteById(userId);
+        try {
+            userRepository.deleteById(userId);
+            return true;
+        } catch (EmptyResultDataAccessException e) {
+            return false;
+        }
     }
 }

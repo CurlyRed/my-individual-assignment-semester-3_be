@@ -1,9 +1,9 @@
 package Marketplace.business;
 
-import Marketplace.domain.User.CreateUserRequest;
-import Marketplace.domain.User.CreateUserResponse;
-import Marketplace.domain.User.UpdateUserRequest;
-import Marketplace.domain.User.User;
+import Marketplace.business.dto.user.CreateUserRequest;
+import Marketplace.business.dto.user.CreateUserResponse;
+import Marketplace.business.dto.user.UpdateUserRequest;
+import Marketplace.domain.User;
 
 import java.util.Optional;
 

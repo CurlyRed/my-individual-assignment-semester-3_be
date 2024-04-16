@@ -1,23 +1,26 @@
 package Marketplace.persistence.entity;
 
-import Marketplace.domain.Attribute.Attribute;
-
-import java.util.ArrayList;
 import java.util.List;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import jakarta.persistence.*;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode
+@Entity
+@Table(name = "categories")
 public class CategoryEntity {
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
-    private String name;
-    private List<AttributeEntity> attributes = new ArrayList<>();
 
+    @Column(name = "name")
+    private String name;
+
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<AttributeEntity> attributes;
 }
