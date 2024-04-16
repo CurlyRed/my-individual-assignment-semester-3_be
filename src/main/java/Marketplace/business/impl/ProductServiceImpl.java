@@ -100,7 +100,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> getProducts(){
+    public List<Product> getProducts() {
         return this.productRepository.findAll().stream()
                 .map(productConverter::toDomain)
                 .collect(Collectors.toList());
