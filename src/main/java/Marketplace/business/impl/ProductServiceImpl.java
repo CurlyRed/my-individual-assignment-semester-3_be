@@ -3,6 +3,7 @@ package Marketplace.business.impl;
 import Marketplace.business.ProductService;
 import Marketplace.business.dto.product.CreateProductRequest;
 import Marketplace.business.dto.product.CreateProductResponse;
+import Marketplace.domain.Attribute;
 import Marketplace.domain.Product;
 import Marketplace.domain.ProductAttribute;
 import Marketplace.persistence.converter.ProductConverter;
@@ -26,8 +27,9 @@ public class ProductServiceImpl implements ProductService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final CityRepository cityRepository;
-    private final ProductAttributeRepository productAttributeRepository;
     private final ProductConverter productConverter;
+    private final AttributeRepository attributeRepository;
+    private final ProductAttributeRepository productAttributeRepository;
 
     @Override
     public CreateProductResponse createProduct(CreateProductRequest request) {
@@ -49,31 +51,25 @@ public class ProductServiceImpl implements ProductService {
                 .city(cityEntity)
                 .user(userEntity)
                 .build();
+
         final ProductEntity savedProductEntity = productRepository.save(productEntity);
 
-        List<ProductAttributeEntity> productAttributeEntities = new ArrayList<>();
-        List<AttributeEntity> attributeEntities = categoryEntity.getAttributes();
-        List<ProductAttribute> productAttributes = request.getAttributes();
+        List<ProductAttributeEntity> productAttributes = new ArrayList<>();
+        for (int i = 0; i < request.getAttributes().size(); i++) {
+            AttributeEntity attribute = categoryEntity.getAttributes().get(i);
+            String value = request.getAttributes().get(i).getValue();
 
-        if (attributeEntities.size() != productAttributes.size()) {
-            throw new IllegalArgumentException("Mismatch in number of attributes and product attributes");
+            ProductAttributeEntity productAttributeEntity = ProductAttributeEntity.builder()
+                    .value(value)
+                    .attribute(attribute)
+                    .product(savedProductEntity)
+                    .build();
+            productAttributes.add(productAttributeEntity);
         }
 
-        for (int i = 0; i < attributeEntities.size(); i++) {
-            AttributeEntity attributeEntity = attributeEntities.get(i);
-            ProductAttribute productAttribute = productAttributes.get(i);
+        productAttributeRepository.saveAll(productAttributes);
 
-            ProductAttributeEntity productAttributeEntity = new ProductAttributeEntity();
-            productAttributeEntity.setValue(productAttribute.getValue());
-            productAttributeEntity.setProduct(savedProductEntity);
-            productAttributeEntity.setAttribute(attributeEntity);
-
-            productAttributeEntities.add(productAttributeEntity);
-        }
-
-        productAttributeRepository.saveAll(productAttributeEntities);
-
-        savedProductEntity.setProduct_attributes(productAttributeEntities);
+        savedProductEntity.setProduct_attributes(productAttributes);
         productRepository.save(savedProductEntity);
 
         return CreateProductResponse.builder()
@@ -81,6 +77,7 @@ public class ProductServiceImpl implements ProductService {
                 .categoryId(savedProductEntity.getCategory().getId())
                 .build();
     }
+
 
 
     @Override

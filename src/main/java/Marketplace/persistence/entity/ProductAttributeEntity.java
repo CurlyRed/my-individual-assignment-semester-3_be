@@ -21,11 +21,11 @@ public class ProductAttributeEntity {
     @Column(name = "value")
     private String value;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
     @JoinColumn(name = "product_id")
     private ProductEntity product;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
     @JoinColumn(name = "attribute_id")
     private AttributeEntity attribute;
 }

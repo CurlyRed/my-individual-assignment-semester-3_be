@@ -38,5 +38,4 @@ public class UserEntity {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<ProductEntity> products;
-
 }

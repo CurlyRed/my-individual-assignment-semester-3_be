@@ -38,6 +38,6 @@ public class ProductEntity {
     @JoinColumn(name = "city_id")
     private CityEntity city;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL ,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL ,fetch = FetchType.EAGER)
     private List<ProductAttributeEntity> product_attributes;
 }
