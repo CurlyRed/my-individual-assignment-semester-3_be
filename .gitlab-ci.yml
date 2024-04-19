@@ -41,7 +41,7 @@ deploy:
     - |
       if [[ "$CI_COMMIT_BRANCH" == "main" ]]; then
         docker build -t ias3_be .
-        docker run -d -p 9000:8080 --name ias_container_be ias3_be
+        docker run -d -p 8000:8080 --name ias_container_be ias3_be
       else
         echo "Skipping deployment as the pipeline was not triggered by the main branch."
       fi
