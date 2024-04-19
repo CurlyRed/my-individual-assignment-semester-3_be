@@ -6,17 +6,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class RoleConverterTest {
+class RoleConverterTest {
 
     private RoleConverter converter;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         converter = new RoleConverter();
     }
 
     @Test
-    public void testToDomain_givenNonNullEntity_shouldConvertCorrectly() {
+    void testToDomain_givenNonNullEntity_shouldConvertCorrectly() {
         // Given
         RoleEntity roleEntity = new RoleEntity();
         roleEntity.setId(1L);
@@ -32,7 +32,7 @@ public class RoleConverterTest {
     }
 
     @Test
-    public void testToDomain_givenNullEntity_shouldReturnNull() {
+    void testToDomain_givenNullEntity_shouldReturnNull() {
         // Given
         RoleEntity roleEntity = null;
 

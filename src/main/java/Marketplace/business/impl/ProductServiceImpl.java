@@ -28,7 +28,6 @@ public class ProductServiceImpl implements ProductService {
     private final UserRepository userRepository;
     private final CityRepository cityRepository;
     private final ProductConverter productConverter;
-    private final AttributeRepository attributeRepository;
     private final ProductAttributeRepository productAttributeRepository;
 
     @Override
@@ -77,8 +76,6 @@ public class ProductServiceImpl implements ProductService {
                 .categoryId(savedProductEntity.getCategory().getId())
                 .build();
     }
-
-
 
     @Override
     public Optional<Product> getProduct(long productId){

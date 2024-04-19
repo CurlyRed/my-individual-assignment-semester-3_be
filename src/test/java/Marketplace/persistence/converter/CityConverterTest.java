@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.when;
 
-public class CityConverterTest {
+class CityConverterTest {
 
     private CityConverter converter;
 
@@ -25,13 +25,13 @@ public class CityConverterTest {
     private ProductConverter productConverter;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.initMocks(this);
         converter = new CityConverter(productConverter);
     }
 
     @Test
-    public void testToDomain_givenNonNullEntity_shouldConvertCorrectly() {
+    void testToDomain_givenNonNullEntity_shouldConvertCorrectly() {
         // Given
         ProductEntity productEntity = new ProductEntity();
         productEntity.setId(1L);
@@ -61,7 +61,7 @@ public class CityConverterTest {
     }
 
     @Test
-    public void testToDomain_givenNullEntity_shouldReturnNull() {
+    void testToDomain_givenNullEntity_shouldReturnNull() {
         // Given
         CityEntity cityEntity = null;
 

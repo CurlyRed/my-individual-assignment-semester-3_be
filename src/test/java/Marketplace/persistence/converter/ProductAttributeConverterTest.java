@@ -6,17 +6,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ProductAttributeConverterTest {
+class ProductAttributeConverterTest {
 
     private ProductAttributeConverter converter;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         converter = new ProductAttributeConverter();
     }
 
     @Test
-    public void testToDomain_givenNonNullEntity_shouldConvertCorrectly() {
+    void testToDomain_givenNonNullEntity_shouldConvertCorrectly() {
         // Given
         ProductAttributeEntity entity = new ProductAttributeEntity();
         entity.setId(1L);
@@ -32,7 +32,7 @@ public class ProductAttributeConverterTest {
     }
 
     @Test
-    public void testToDomain_givenNullEntity_shouldReturnNull() {
+    void testToDomain_givenNullEntity_shouldReturnNull() {
         // Given
         ProductAttributeEntity entity = null;
 
@@ -44,7 +44,7 @@ public class ProductAttributeConverterTest {
     }
 
     @Test
-    public void testToEntity_givenNonNullAttribute_shouldConvertCorrectly() {
+    void testToEntity_givenNonNullAttribute_shouldConvertCorrectly() {
         // Given
         ProductAttribute attribute = new ProductAttribute();
         attribute.setId(1L);
@@ -60,7 +60,7 @@ public class ProductAttributeConverterTest {
     }
 
     @Test
-    public void testToEntity_givenNullAttribute_shouldReturnNull() {
+    void testToEntity_givenNullAttribute_shouldReturnNull() {
         // Given
         ProductAttribute attribute = null;
 

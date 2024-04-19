@@ -5,12 +5,12 @@ import Marketplace.persistence.entity.AttributeEntity;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class AttributeConverterTest {
+class AttributeConverterTest {
 
     final private AttributeConverter converter = new AttributeConverter();
 
     @Test
-    public void testToDomain_givenNonNullEntity_shouldConvertCorrectly() {
+    void testToDomain_givenNonNullEntity_shouldConvertCorrectly() {
         // Given
         AttributeEntity entity = new AttributeEntity();
         entity.setId(1L);
@@ -26,7 +26,7 @@ public class AttributeConverterTest {
     }
 
     @Test
-    public void testToDomain_givenNullEntity_shouldReturnNull() {
+    void testToDomain_givenNullEntity_shouldReturnNull() {
         // Given
         AttributeEntity entity = null;
 
@@ -38,7 +38,7 @@ public class AttributeConverterTest {
     }
 
     @Test
-    public void testToEntity_givenNonNullAttribute_shouldConvertCorrectly() {
+    void testToEntity_givenNonNullAttribute_shouldConvertCorrectly() {
         // Given
         Attribute attribute = new Attribute();
         attribute.setId(1L);
@@ -54,7 +54,7 @@ public class AttributeConverterTest {
     }
 
     @Test
-    public void testToEntity_givenNullAttribute_shouldReturnNull() {
+    void testToEntity_givenNullAttribute_shouldReturnNull() {
         // Given
         Attribute attribute = null;
 

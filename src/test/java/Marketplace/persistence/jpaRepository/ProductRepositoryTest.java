@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class ProductRepositoryTest {
+class ProductRepositoryTest {
     @Autowired
     private ProductRepository productRepository;
     @Autowired
@@ -31,7 +31,7 @@ public class ProductRepositoryTest {
     private CityRepository cityRepository;
 
     @Test
-    public void save_shouldSaveProductWithProductAttributes(){
+    void save_shouldSaveProductWithProductAttributes(){
         // Given
         List<AttributeEntity> attributes = new ArrayList<>();
         attributes.add(AttributeEntity.builder().name("Test1").build());
@@ -98,7 +98,7 @@ public class ProductRepositoryTest {
     }
 
     @Test
-    public void delete_shouldDeleteProduct(){
+    void delete_shouldDeleteProduct(){
         // Given
         List<AttributeEntity> attributes = new ArrayList<>();
         attributes.add(AttributeEntity.builder().name("Test1").build());
@@ -165,7 +165,7 @@ public class ProductRepositoryTest {
     }
 
     @Test
-    public void findById_shouldReturnProductById(){
+    void findById_shouldReturnProductById(){
         // Given
         List<AttributeEntity> attributes = new ArrayList<>();
         attributes.add(AttributeEntity.builder().name("Test1").build());
@@ -233,7 +233,7 @@ public class ProductRepositoryTest {
     }
 
     @Test
-    public void findAll_shouldReturnAllProducts(){
+    void findAll_shouldReturnAllProducts(){
         // Given
         List<AttributeEntity> attributes = new ArrayList<>();
         attributes.add(AttributeEntity.builder().name("Test1").build());

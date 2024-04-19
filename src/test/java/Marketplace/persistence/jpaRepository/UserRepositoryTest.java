@@ -16,14 +16,14 @@ import static org.junit.Assert.*;
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class UserRepositoryTest {
+class UserRepositoryTest {
     @Autowired
     private UserRepository userRepository;
     @Autowired
     private RoleRepository roleRepository;
 
     @Test
-    public void save_shouldSaveUser(){
+    void save_shouldSaveUser(){
         // Given
         RoleEntity role = RoleEntity.builder()
                 .name("USER")
@@ -49,7 +49,7 @@ public class UserRepositoryTest {
     }
 
     @Test
-    public void delete_shouldDeleteUser(){
+    void delete_shouldDeleteUser(){
         // Given
         RoleEntity role = RoleEntity.builder()
                 .name("USER")
@@ -73,7 +73,7 @@ public class UserRepositoryTest {
     }
 
     @Test
-    public void findById_shouldReturnUser(){
+    void findById_shouldReturnUser(){
         // Given
         RoleEntity role = RoleEntity.builder()
                 .name("USER")
@@ -102,7 +102,7 @@ public class UserRepositoryTest {
     }
 
     @Test
-    public void findAll_shouldReturnAllUsers(){
+    void findAll_shouldReturnAllUsers(){
         // Given
         RoleEntity role = RoleEntity.builder()
                 .name("USER")

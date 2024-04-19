@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.when;
 
-public class UserConverterTest {
+class UserConverterTest {
 
     private UserConverter converter;
 
@@ -27,13 +27,13 @@ public class UserConverterTest {
     private ProductConverter productConverter;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.initMocks(this);
         converter = new UserConverter(roleConverter, productConverter);
     }
 
     @Test
-    public void testToDomain_givenNonNullEntity_shouldConvertCorrectly() {
+    void testToDomain_givenNonNullEntity_shouldConvertCorrectly() {
         // Given
         RoleEntity roleEntity = RoleEntity.builder()
                 .id(1L)
@@ -69,7 +69,7 @@ public class UserConverterTest {
     }
 
     @Test
-    public void testToDomain_givenNullEntity_shouldReturnNull() {
+    void testToDomain_givenNullEntity_shouldReturnNull() {
         // Given
         UserEntity userEntity = null;
 

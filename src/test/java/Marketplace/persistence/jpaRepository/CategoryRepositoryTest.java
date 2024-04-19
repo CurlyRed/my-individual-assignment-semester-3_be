@@ -19,14 +19,14 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class CategoryRepositoryTest {
+class CategoryRepositoryTest {
     @Autowired
     private CategoryRepository categoryRepository;
     @Autowired
     private AttributeRepository attributeRepository;
 
     @Test
-    public void save_shouldSaveCategoryWithAttributes(){
+    void save_shouldSaveCategoryWithAttributes(){
         // Given
         List<AttributeEntity> attributes = new ArrayList<>();
         attributes.add(AttributeEntity.builder().name("Test1").build());
@@ -45,7 +45,7 @@ public class CategoryRepositoryTest {
     }
 
     @Test
-    public void delete_shouldDeleteCategoryWithAttributes(){
+    void delete_shouldDeleteCategoryWithAttributes(){
         // Given
         List<AttributeEntity> attributes = new ArrayList<>();
         attributes.add(AttributeEntity.builder().name("Test1").build());
@@ -70,7 +70,7 @@ public class CategoryRepositoryTest {
     }
 
     @Test
-    public void findById_shouldReturnCategoryWithAttributes(){
+    void findById_shouldReturnCategoryWithAttributes(){
         // Given
         List<AttributeEntity> attributes = new ArrayList<>();
         attributes.add(AttributeEntity.builder().name("Test1").build());
@@ -95,7 +95,7 @@ public class CategoryRepositoryTest {
     }
 
     @Test
-    public void findAll_shouldReturnAllCategoriesWithAttributes(){
+    void findAll_shouldReturnAllCategoriesWithAttributes(){
         // Given
         List<AttributeEntity> attributes1 = new ArrayList<>();
         attributes1.add(AttributeEntity.builder().name("Test1").build());

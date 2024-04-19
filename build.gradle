@@ -56,10 +56,10 @@ sonar {
     properties {
         property "sonar.projectKey", "***REMOVED***"
         property "sonar.projectName", "My individual assignment semester 3_BE"
+        property "sonar.token", "***REMOVED***"
         property "sonar.qualityGate.wait", true
         property "sonar.gradle.skipCompile", true
         property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml"
-
     }
 }
 

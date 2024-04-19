@@ -56,8 +56,6 @@ public class CategoryServiceImpl implements CategoryService {
                 .build();
     }
 
-
-
     @Override
     public Optional<Category> getCategory(long categoryId){
         return categoryRepository.findById(categoryId)

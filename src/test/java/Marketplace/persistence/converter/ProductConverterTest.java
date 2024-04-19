@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.when;
 
-public class ProductConverterTest {
+class ProductConverterTest {
 
     private ProductConverter converter;
 
@@ -27,13 +27,13 @@ public class ProductConverterTest {
     private ProductAttributeConverter productAttributeConverter;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.initMocks(this);
         converter = new ProductConverter(categoryConverter, productAttributeConverter);
     }
 
     @Test
-    public void testToDomain_givenNonNullEntity_shouldConvertCorrectly() {
+    void testToDomain_givenNonNullEntity_shouldConvertCorrectly() {
         // Given
         CategoryEntity categoryEntity = CategoryEntity.builder()
                 .id(1L)
@@ -65,7 +65,7 @@ public class ProductConverterTest {
     }
 
     @Test
-    public void testToDomain_givenNullEntity_shouldReturnNull() {
+    void testToDomain_givenNullEntity_shouldReturnNull() {
         // Given
         ProductEntity productEntity = null;
 
@@ -77,7 +77,7 @@ public class ProductConverterTest {
     }
 
     @Test
-    public void testToEntity_givenNonNullProduct_shouldConvertCorrectly() {
+    void testToEntity_givenNonNullProduct_shouldConvertCorrectly() {
         // Given
         Category category = Category.builder().id(1L).name("Test Category").build();
 
@@ -106,7 +106,7 @@ public class ProductConverterTest {
     }
 
     @Test
-    public void testToEntity_givenNullProduct_shouldReturnNull() {
+    void testToEntity_givenNullProduct_shouldReturnNull() {
         // Given
         Product product = null;
 

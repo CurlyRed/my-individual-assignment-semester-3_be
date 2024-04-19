@@ -27,7 +27,6 @@ public class ProductConverter {
                 .category(categoryConverter.toDomain(productEntity.getCategory()))
                 .productAttributes(productEntity.getProduct_attributes().stream()
                         .map(productAttributeConverter::toDomain)
-                        .filter(Objects::nonNull)
                         .collect(Collectors.toList()))
                 .build();
     }

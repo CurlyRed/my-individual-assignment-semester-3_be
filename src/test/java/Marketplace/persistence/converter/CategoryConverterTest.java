@@ -16,7 +16,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-public class CategoryConverterTest {
+    class CategoryConverterTest {
 
     private CategoryConverter converter;
 
@@ -24,13 +24,13 @@ public class CategoryConverterTest {
     private AttributeConverter attributeConverter;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.initMocks(this);
         converter = new CategoryConverter(attributeConverter);
     }
 
     @Test
-    public void testToDomain_givenNonNullEntity_shouldConvertCorrectly() {
+    void testToDomain_givenNonNullEntity_shouldConvertCorrectly() {
         // Given
         AttributeEntity attributeEntity = new AttributeEntity();
         attributeEntity.setId(1L);
@@ -59,7 +59,7 @@ public class CategoryConverterTest {
     }
 
     @Test
-    public void testToDomain_givenNullEntity_shouldReturnNull() {
+    void testToDomain_givenNullEntity_shouldReturnNull() {
         // Given
         CategoryEntity categoryEntity = null;
 
@@ -71,7 +71,7 @@ public class CategoryConverterTest {
     }
 
     @Test
-    public void testToEntity_givenNonNullCategory_shouldConvertCorrectly() {
+    void testToEntity_givenNonNullCategory_shouldConvertCorrectly() {
         // Given
         Attribute attribute = new Attribute(1L, "Test Attribute");
 
@@ -100,7 +100,7 @@ public class CategoryConverterTest {
     }
 
     @Test
-    public void testToEntity_givenNullCategory_shouldReturnNull() {
+    void testToEntity_givenNullCategory_shouldReturnNull() {
         // Given
         Category category = null;
 
