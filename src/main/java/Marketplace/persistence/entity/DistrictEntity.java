@@ -23,6 +23,6 @@ public class DistrictEntity {
     @Column(name = "name")
     private String name;
 
-    @OneToMany(mappedBy = "district")
+    @OneToMany(mappedBy = "district", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<CityEntity> cities;
 }

@@ -1,4 +1,4 @@
-/*package Marketplace.config.security.token.impl;
+package Marketplace.config.security.token.impl;
 
 import Marketplace.config.security.token.AccessToken;
 import lombok.EqualsAndHashCode;
@@ -11,17 +11,14 @@ public class AccessTokenImpl implements AccessToken {
     private final Long userId;
     private final String role;
 
-    public AccessTokenImpl(String subject, Long userId, String role){
-        this.subject=subject;
-        this.userId=userId;
-        if(role==null || role.isEmpty()){
-            throw new IllegalArgumentException("Role can not be empty");
-        }
-        this.role=role;
+    public AccessTokenImpl(String subject, Long userId, String role) {
+        this.subject = subject;
+        this.userId = userId;
+        this.role = role != null ? role : "";
     }
 
-    @Override
-    public boolean hasRole(String roleName){
-        return this.role.equals(roleName);
+    public boolean hasRole(String roleName) {
+        return roleName.equals(role);
     }
-}*/
+}
+

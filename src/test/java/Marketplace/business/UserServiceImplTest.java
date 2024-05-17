@@ -43,8 +43,6 @@ class UserServiceImplTest {
         CreateUserRequest request = CreateUserRequest.builder()
                 .email("test@example.com")
                 .password("password")
-                .firstName("John")
-                .lastName("Doe")
                 .build();
 
         RoleEntity roleEntity = RoleEntity.builder().id(roleId).name("ROLE_USER").build();
@@ -53,8 +51,6 @@ class UserServiceImplTest {
                 .id(1L)
                 .email(request.getEmail())
                 .password(request.getPassword())
-                .firstName(request.getFirstName())
-                .lastName(request.getLastName())
                 .role(roleEntity)
                 .build();
 

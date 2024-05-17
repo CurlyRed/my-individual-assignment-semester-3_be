@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 public class UserConverter {
     public final RoleConverter roleConverter;
     public final ProductConverter productConverter;
+    public final UserBalanceConverter userBalanceConverter;
 
     public User toDomain(UserEntity userEntity){
         if(userEntity == null){
@@ -27,11 +28,13 @@ public class UserConverter {
                 .password(userEntity.getPassword())
                 .firstName(userEntity.getFirstName())
                 .lastName(userEntity.getLastName())
+                .date_of_registry(userEntity.getDate_of_registry())
                 .role(roleConverter.toDomain(userEntity.getRole()))
                 .products(userEntity.getProducts().stream()
                         .map(productConverter::toDomain)
                         .filter(Objects::nonNull)
                         .collect(Collectors.toList()))
+                .balance(userBalanceConverter.toDomain(userEntity.getUser_balance()))
                 .build();
     }
 }

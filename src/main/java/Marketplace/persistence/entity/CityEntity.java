@@ -27,6 +27,6 @@ public class CityEntity {
     @JoinColumn(name = "district_id")
     private DistrictEntity district;
 
-    @OneToMany(mappedBy = "city")
+    @OneToMany(mappedBy = "city", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<ProductEntity> products;
 }

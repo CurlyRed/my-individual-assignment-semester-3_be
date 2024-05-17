@@ -1,4 +1,4 @@
-/*package Marketplace.config.security;
+package Marketplace.config.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,4 +12,4 @@ public class PasswordEncoderConfig {
     public PasswordEncoder createBCryptPasswordEncoder(){
         return new BCryptPasswordEncoder();
     }
-}*/
+}

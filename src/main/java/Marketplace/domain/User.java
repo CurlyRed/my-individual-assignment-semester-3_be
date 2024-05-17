@@ -1,5 +1,6 @@
 package Marketplace.domain;
 
+import java.util.Date;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -18,7 +19,8 @@ public class User {
     private String password;
     private String firstName;
     private String lastName;
+    private Date date_of_registry;
     private Role role;
     private List<Product> products;
-
+    private UserBalance balance;
 }

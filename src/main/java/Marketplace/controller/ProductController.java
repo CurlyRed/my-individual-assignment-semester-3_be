@@ -3,9 +3,11 @@ package Marketplace.controller;
 import Marketplace.business.ProductService;
 import Marketplace.business.dto.product.CreateProductRequest;
 import Marketplace.business.dto.product.CreateProductResponse;
+import Marketplace.business.dto.product.UpdateProductRequest;
+import Marketplace.business.exception.UnauthorizedDataAccessException;
 import Marketplace.domain.Product;
 
-import Marketplace.business.dto.product.UpdateProductRequest;
+import jakarta.annotation.security.RolesAllowed;
 import lombok.AllArgsConstructor;
 
 import org.springframework.http.HttpStatus;
@@ -22,10 +24,15 @@ import java.util.Optional;
 public class ProductController {
     private final ProductService productService;
 
+    @RolesAllowed({"USER"})
     @PostMapping
     public ResponseEntity<CreateProductResponse> createProduct(@RequestBody @Valid CreateProductRequest request){
-        CreateProductResponse response = productService.createProduct(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        try{
+            CreateProductResponse response = productService.createProduct(request);
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (UnauthorizedDataAccessException e){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
     }
 
     @GetMapping("{id}")
@@ -34,6 +41,22 @@ public class ProductController {
         return productOptional.map(product -> ResponseEntity.ok().body(product)).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @RolesAllowed({"USER", "ADMIN", "SUPPORT"})
+    @PutMapping("{id}")
+    public ResponseEntity<Void> updateProduct(@PathVariable(value = "id") final long productId, @RequestBody @Valid UpdateProductRequest request){
+        try {
+            productService.updateProduct(productId, request);
+            return ResponseEntity.ok().build();
+        } catch (UnauthorizedDataAccessException e){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        } catch (IllegalArgumentException e){
+            return ResponseEntity.badRequest().build();
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @RolesAllowed({"USER", "ADMIN"})
     @DeleteMapping("{productId}")
     public ResponseEntity<Void> deleteProduct(@PathVariable long productId){
         productService.deleteProduct(productId);
@@ -44,5 +67,27 @@ public class ProductController {
     public ResponseEntity<List<Product>> getProducts(){
         List<Product> products = productService.getProducts();
         return ResponseEntity.ok().body(products);
+    }
+
+    @RolesAllowed({"USER", "ADMIN", "SUPPORT"})
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<Product>> getProductForUser(@PathVariable long userId){
+        try {
+            List<Product> products = productService.getProductsForUser(userId);
+            return ResponseEntity.ok().body(products);
+        } catch (UnauthorizedDataAccessException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+    }
+
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<List<Product>> getProductsForCategory(@PathVariable long categoryId){
+        try{
+            List<Product> products = productService.getProductsForCategory(categoryId);
+            return ResponseEntity.ok().body(products);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
+
     }
 }

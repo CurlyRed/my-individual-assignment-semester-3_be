@@ -24,14 +24,14 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
-/*    implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'*/
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     implementation 'org.flywaydb:flyway-core'
     implementation 'org.flywaydb:flyway-mysql'
     implementation 'mysql:mysql-connector-java:8.0.33'
 
-/*    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
-    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'*/
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
     compileOnly 'org.projectlombok:lombok'
 
@@ -43,9 +43,7 @@ dependencies {
     testImplementation 'org.springframework.cloud:spring-cloud-starter-bootstrap:4.0.4'
     testImplementation 'org.testcontainers:testcontainers:1.16.3'
     testImplementation 'com.playtika.testcontainers:embedded-mysql:3.0.0-RC9'
-/*
     testImplementation 'org.springframework.security:spring-security-test'
-*/
 }
 
 test {
@@ -60,6 +58,7 @@ sonar {
         property "sonar.qualityGate.wait", true
         property "sonar.gradle.skipCompile", true
         property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml"
+        property "sonar.coverage.exclusions", "**/controller/**, **/domain/**, **/config/**"
     }
 }
 

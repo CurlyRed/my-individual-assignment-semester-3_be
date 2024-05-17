@@ -6,6 +6,7 @@ import Marketplace.business.dto.category.CreateCategoryRequest;
 import Marketplace.business.dto.category.CreateCategoryResponse;
 import Marketplace.business.dto.category.UpdateCategoryRequest;
 
+import jakarta.annotation.security.RolesAllowed;
 import lombok.AllArgsConstructor;
 
 import org.springframework.http.HttpStatus;

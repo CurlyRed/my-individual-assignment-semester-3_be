@@ -26,10 +26,13 @@ class UserConverterTest {
     @Mock
     private ProductConverter productConverter;
 
+    @Mock
+    private UserBalanceConverter balanceConverter;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
-        converter = new UserConverter(roleConverter, productConverter);
+        converter = new UserConverter(roleConverter, productConverter, balanceConverter);
     }
 
     @Test

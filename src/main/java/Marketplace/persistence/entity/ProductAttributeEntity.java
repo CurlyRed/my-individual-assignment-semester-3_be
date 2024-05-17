@@ -21,11 +21,11 @@ public class ProductAttributeEntity {
     @Column(name = "value")
     private String value;
 
-    @ManyToOne()
+    @ManyToOne
     @JoinColumn(name = "product_id")
     private ProductEntity product;
 
-    @ManyToOne()
+    @ManyToOne
     @JoinColumn(name = "attribute_id")
     private AttributeEntity attribute;
 }

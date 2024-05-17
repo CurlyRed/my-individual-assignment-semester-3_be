@@ -16,4 +16,6 @@ public interface UserService {
 
     boolean deleteById(long userId);
 
+    Optional<User> getUserByProductId(long productId);
+
 }

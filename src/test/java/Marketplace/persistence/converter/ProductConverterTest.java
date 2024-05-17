@@ -26,10 +26,13 @@ class ProductConverterTest {
     @Mock
     private ProductAttributeConverter productAttributeConverter;
 
+    @Mock
+    private ContactInformationConverter contactInformationConverter;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
-        converter = new ProductConverter(categoryConverter, productAttributeConverter);
+        converter = new ProductConverter(categoryConverter, productAttributeConverter, contactInformationConverter);
     }
 
     @Test

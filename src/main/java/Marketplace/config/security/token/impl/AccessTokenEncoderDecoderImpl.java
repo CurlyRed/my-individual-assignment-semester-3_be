@@ -1,4 +1,4 @@
-/*package Marketplace.config.security.token.impl;
+package Marketplace.config.security.token.impl;
 
 import Marketplace.config.security.token.AccessToken;
 import Marketplace.config.security.token.AccessTokenDecoder;
@@ -11,6 +11,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.time.Instant;
@@ -19,6 +20,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+@Service
 public class AccessTokenEncoderDecoderImpl implements AccessTokenEncoder, AccessTokenDecoder {
 
     private final Key key;
@@ -30,7 +32,7 @@ public class AccessTokenEncoderDecoderImpl implements AccessTokenEncoder, Access
     @Override
     public String encode(AccessToken accessToken){
         Map<String, Object> claims = new HashMap<>();
-        if(!accessToken.getRole().isEmpty()){
+        if (accessToken.getRole() != null) {
             claims.put("role", accessToken.getRole());
         }
         if(accessToken.getUserId() != null){
@@ -62,4 +64,4 @@ public class AccessTokenEncoderDecoderImpl implements AccessTokenEncoder, Access
             throw new InvalidAccessTokenException(e.getMessage());
         }
     }
-}*/
+}

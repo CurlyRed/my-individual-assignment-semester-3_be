@@ -92,7 +92,6 @@ class ProductServiceImplTest {
                 .productName("test")
                 .productDescription("testDescription")
                 .cityId(cityEntity.getId())
-                .userId(userEntity.getId())
                 .categoryId(categoryEntity.getId())
                 .attributes(productAttributesDomain)
                 .build();

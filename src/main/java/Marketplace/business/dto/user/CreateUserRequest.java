@@ -17,10 +17,5 @@ public class CreateUserRequest {
     private String password;
     @NotBlank
     private String email;
-    @NotBlank
-    private String firstName;
-    @NotBlank
-    private String lastName;
-    final private Long roleId = 1L;
-
+    private Long roleId;
 }
