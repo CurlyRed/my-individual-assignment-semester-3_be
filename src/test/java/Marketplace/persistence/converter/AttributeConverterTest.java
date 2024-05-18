@@ -2,12 +2,18 @@ package Marketplace.persistence.converter;
 
 import Marketplace.domain.Attribute;
 import Marketplace.persistence.entity.AttributeEntity;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class AttributeConverterTest {
 
-    final private AttributeConverter converter = new AttributeConverter();
+    private AttributeConverter converter;
+
+    @BeforeEach
+    void setUp() {
+        converter = new AttributeConverter();
+    }
 
     @Test
     void testToDomain_givenNonNullEntity_shouldConvertCorrectly() {

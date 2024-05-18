@@ -62,15 +62,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public Optional<User> getUser(long userId){
-        if(!requestAccessToken.hasRole("ADMIN")){
-            if(requestAccessToken.getUserId() != userId){
-                throw new UnauthorizedDataAccessException("USER_ID_NOT_FROM_LOGGED_IN_USER");
-            }
+    public Optional<User> getUser(long userId) {
+        if (!requestAccessToken.hasRole("ADMIN") && requestAccessToken.getUserId() != userId) {
+            throw new UnauthorizedDataAccessException("USER_ID_NOT_FROM_LOGGED_IN_USER");
         }
         return userRepository.findById(userId)
                 .map(userConverter::toDomain);
     }
+
 
     @Override
     public boolean updateUser(UpdateUserRequest request){

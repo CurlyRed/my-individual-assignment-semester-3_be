@@ -36,10 +36,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     private String generateAccessToken(UserEntity user) {
-        Long userId = user != null ? user.getId() : null;
-        String role = user.getRole().getName();
+        if (user == null) {
+            throw new IllegalArgumentException("User cannot be null");
+        }
+
+        Long userId = user.getId();
+        String role = user.getRole() != null ? user.getRole().getName() : null;
 
         return accessTokenEncoder.encode(
                 new AccessTokenImpl(user.getEmail(), userId, role));
     }
+
 }

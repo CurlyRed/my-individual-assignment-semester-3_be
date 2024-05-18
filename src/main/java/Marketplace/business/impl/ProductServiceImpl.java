@@ -3,16 +3,10 @@ package Marketplace.business.impl;
 import Marketplace.business.ProductService;
 import Marketplace.business.dto.product.CreateProductRequest;
 import Marketplace.business.dto.product.CreateProductResponse;
-import Marketplace.business.dto.product.GetLocationForProductResponse;
 import Marketplace.business.dto.product.UpdateProductRequest;
 import Marketplace.business.exception.UnauthorizedDataAccessException;
-import Marketplace.config.logger.LoggerUtil;
 import Marketplace.config.security.token.AccessToken;
-import Marketplace.domain.Attribute;
 import Marketplace.domain.Product;
-import Marketplace.domain.ProductAttribute;
-import Marketplace.persistence.converter.CityConverter;
-import Marketplace.persistence.converter.DistrictConverter;
 import Marketplace.persistence.converter.ProductConverter;
 import Marketplace.persistence.entity.*;
 import Marketplace.persistence.jpaRepository.*;
@@ -22,7 +16,6 @@ import lombok.AllArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -43,10 +36,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductAttributeRepository productAttributeRepository;
     private final ContactInformationRepository contactInformationRepository;
     private final AccessToken requestAccessToken;
-    private final DistrictRepository districtRepository;
-    private final DistrictConverter districtConverter;
-    private final CityConverter cityConverter;
-    private final LoggerUtil loggerUtil;
+    private final String unauthorizedExceptionMessage = "USER_ID_NOT_FROM_LOGGED_IN_USER";
 
     @Override
     @Transactional
@@ -63,7 +53,7 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         if(!Objects.equals(userEntity.getId(), requestAccessToken.getUserId())) {
-            throw new UnauthorizedDataAccessException("USER_ID_NOT_FROM_LOGGED_IN_USER");
+            throw new UnauthorizedDataAccessException(unauthorizedExceptionMessage);
         }
 
         ProductEntity productEntity = ProductEntity.builder()
@@ -122,7 +112,6 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public void updateProduct(long productId, UpdateProductRequest request) {
-        loggerUtil.logINFO(String.valueOf(request));
         if (request == null) {
             throw new IllegalArgumentException("Update request cannot be null");
         }
@@ -137,7 +126,7 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         if (!Objects.equals(userEntity.getId(), requestAccessToken.getUserId())) {
-            throw new UnauthorizedDataAccessException("USER_ID_NOT_FROM_LOGGED_IN_USER");
+            throw new UnauthorizedDataAccessException(unauthorizedExceptionMessage);
         }
 
         ContactInformationEntity contactInformation = existingProduct.getContact_information();
@@ -157,7 +146,6 @@ public class ProductServiceImpl implements ProductService {
         productRepository.save(existingProduct);
     }
 
-
     @Override
     @Transactional
     public boolean deleteProduct(long productId){
@@ -174,28 +162,28 @@ public class ProductServiceImpl implements ProductService {
     public List<Product> getProducts() {
         return this.productRepository.findAll().stream()
                 .map(productConverter::toDomain)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
     @Transactional
     public List<Product> getProductsForUser(long userId) {
         if (requestAccessToken.getUserId() != userId) {
-            throw new UnauthorizedDataAccessException("USER_ID_NOT_FROM_LOGGED_IN_USER");
+            throw new UnauthorizedDataAccessException(unauthorizedExceptionMessage);
         }
         return this.productRepository.findByUserId(userId).stream()
                 .map(productConverter::toDomain)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
     @Transactional
     public List<Product> getProductsForCategory(long categoryId) {
         if(productRepository.findByCategoryId(categoryId).isEmpty()) {
-            throw new IllegalArgumentException("Category not found");
+            throw new IllegalArgumentException("Category does not have products yet");
         }
         return this.productRepository.findByCategoryId(categoryId).stream()
                 .map(productConverter::toDomain)
-                .collect(Collectors.toList());
+                .toList();
     }
 }

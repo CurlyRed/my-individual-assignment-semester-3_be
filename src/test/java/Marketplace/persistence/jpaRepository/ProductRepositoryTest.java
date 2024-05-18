@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -87,6 +88,7 @@ class ProductRepositoryTest {
                 .user(user)
                 .product_attributes(productAttributes)
                 .city(city)
+                .date_of_post(new Date())
                 .build();
 
         // When
@@ -154,6 +156,7 @@ class ProductRepositoryTest {
                 .user(user)
                 .product_attributes(productAttributes)
                 .city(city)
+                .date_of_post(new Date())
                 .build();
 
         ProductEntity savedProduct = productRepository.save(product);
@@ -221,6 +224,7 @@ class ProductRepositoryTest {
                 .user(user)
                 .product_attributes(productAttributes)
                 .city(city)
+                .date_of_post(new Date())
                 .build();
 
         ProductEntity savedProduct = productRepository.save(product);
@@ -289,6 +293,7 @@ class ProductRepositoryTest {
                 .user(user)
                 .product_attributes(productAttributes)
                 .city(city)
+                .date_of_post(new Date())
                 .build();
 
         ProductEntity product2 = ProductEntity.builder()
@@ -298,6 +303,7 @@ class ProductRepositoryTest {
                 .user(user)
                 .product_attributes(productAttributes)
                 .city(city)
+                .date_of_post(new Date())
                 .build();
 
         productRepository.save(product1);

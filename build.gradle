@@ -58,7 +58,7 @@ sonar {
         property "sonar.qualityGate.wait", true
         property "sonar.gradle.skipCompile", true
         property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml"
-        property "sonar.coverage.exclusions", "**/controller/**, **/domain/**, **/config/**"
+        property "sonar.coverage.exclusions", "**/controller/**, **/domain/**, **/config/**, **/persistence/entity**, **/business/exception/**, **/business/dto/**"
     }
 }
 

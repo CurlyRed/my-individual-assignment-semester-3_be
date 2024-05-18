@@ -46,7 +46,7 @@ CategoryServiceImpl implements CategoryService {
                     attributeEntity.setCategory(savedCategoryEntity);
                     return attributeEntity;
                 })
-                .collect(Collectors.toList());
+                .toList();
         attributeRepository.saveAll(attributeEntities);
 
         savedCategoryEntity.setAttributes(attributeEntities);
@@ -77,6 +77,6 @@ CategoryServiceImpl implements CategoryService {
     public List<Category> getCategories(){
         return categoryRepository.findAll().stream()
                 .map(categoryConverter::toDomain)
-                .collect(Collectors.toList());
+                .toList();
     }
 }

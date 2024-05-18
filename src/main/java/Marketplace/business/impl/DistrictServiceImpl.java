@@ -41,12 +41,17 @@ public class DistrictServiceImpl implements DistrictService {
         if (!product.isPresent()) {
             throw new IllegalArgumentException("Product not found");
         }
+
         Optional<CityEntity> city = cityRepository.findById(product.get().getCity().getId());
-        Optional<DistrictEntity> district = districtRepository.findById(city.get().getDistrict().getId());
+        Optional<DistrictEntity> district = Optional.empty();
+
+        if (city.isPresent()) {
+            district = districtRepository.findById(city.get().getDistrict().getId());
+        }
 
         return GetLocationForProductResponse.builder()
-                .districtName(district.get().getName())
-                .cityName(city.get().getName())
+                .districtName(district.isPresent() ? district.get().getName() : null)
+                .cityName(city.isPresent() ? city.get().getName() : null)
                 .build();
     }
 }

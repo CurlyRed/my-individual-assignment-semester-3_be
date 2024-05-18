@@ -30,14 +30,14 @@ public class AccountController {
 
     //CRUD OF USERS
     @PostMapping()
-    public ResponseEntity<?> createUser(@RequestBody @Valid CreateUserRequest request) {
+    public ResponseEntity<Object> createUser(@RequestBody @Valid CreateUserRequest request) {
         try {
             CreateUserResponse response = userService.createUser(request);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (EmailAlreadyExistsException e) {
             return ResponseEntity.status(e.getStatusCode()).body("Email already exists. Please use another one.");
         } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unknown error occured:" + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unknown error occurred:" + e.getMessage());
         }
     }
 
@@ -46,9 +46,12 @@ public class AccountController {
     public ResponseEntity<User> getUser(@PathVariable(value = "id") final long userId){
         try{
             final Optional<User> userOptional = userService.getUser(userId);
-            return userOptional.map(user -> ResponseEntity.ok().body(user)).orElseGet(() -> ResponseEntity.notFound().build());
+            return userOptional.map(user -> ResponseEntity.ok().body(user))
+                    .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
         } catch (UnauthorizedDataAccessException e) {
             return ResponseEntity.status(e.getStatusCode()).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
@@ -69,25 +72,27 @@ public class AccountController {
     }
 
     @GetMapping("/product/{productId}")
-    public ResponseEntity<?> getUserByProductId(@PathVariable("productId") long productId){
+    public ResponseEntity<Object> getUserByProductId(@PathVariable("productId") long productId) {
         try {
             final Optional<User> userOptional = userService.getUserByProductId(productId);
-            return userOptional.map(user -> ResponseEntity.ok().body(user)).orElseGet(() -> ResponseEntity.notFound().build());
-        } catch (Exception e){
+            return userOptional
+                    .map(user -> ResponseEntity.ok().<Object>body(user))
+                    .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
     // AUTHENTICATION & AUTHORIZATION
     @PostMapping("/auth/login")
-    public ResponseEntity<?> login(@RequestBody @Valid LoginRequest request) {
+    public ResponseEntity<Object> login(@RequestBody @Valid LoginRequest request) {
         try {
             LoginResponse loginResponse = authenticationService.login(request);
-            return ResponseEntity.status(HttpStatus.CREATED).body(loginResponse);
+            return ResponseEntity.status(HttpStatus.CREATED).body((Object) loginResponse);
         } catch (InvalidCredentialsException e) {
-            return ResponseEntity.status(e.getStatusCode()).body("Invalid credentials. Please try again.");
+            return ResponseEntity.status(e.getStatusCode()).body((Object) "Invalid credentials. Please try again.");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body((Object) e.getMessage());
         }
     }
 }
