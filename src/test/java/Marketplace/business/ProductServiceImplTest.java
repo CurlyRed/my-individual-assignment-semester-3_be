@@ -55,7 +55,7 @@ class ProductServiceImplTest {
     }
 
     @Test
-    public void testCreateProduct_withValidRequest_shouldReturnCreateProductResponse() {
+    void testCreateProduct_withValidRequest_shouldReturnCreateProductResponse() {
         // Given
         CreateProductRequest request = createValidProductRequest();
 
@@ -99,7 +99,7 @@ class ProductServiceImplTest {
     }
 
     @Test
-    public void testCreateProduct_withNullRequest_shouldReturnNull() {
+    void testCreateProduct_withNullRequest_shouldReturnNull() {
         // When
         CreateProductResponse response = productService.createProduct(null);
 
@@ -111,7 +111,7 @@ class ProductServiceImplTest {
     }
 
     @Test
-    public void testCreateProduct_withNonExistentCategory_shouldThrowException() {
+    void testCreateProduct_withNonExistentCategory_shouldThrowException() {
         // Given
         CreateProductRequest request = createValidProductRequest();
 
@@ -127,7 +127,7 @@ class ProductServiceImplTest {
     }
 
     @Test
-    public void testCreateProduct_withNonExistentCity_shouldThrowException() {
+    void testCreateProduct_withNonExistentCity_shouldThrowException() {
         // Given
         CreateProductRequest request = createValidProductRequest();
 
@@ -146,7 +146,7 @@ class ProductServiceImplTest {
     }
 
     @Test
-    public void testCreateProduct_withNonExistentUser_shouldThrowException() {
+    void testCreateProduct_withNonExistentUser_shouldThrowException() {
         // Given
         CreateProductRequest request = createValidProductRequest();
 
@@ -168,7 +168,7 @@ class ProductServiceImplTest {
     }
 
     @Test
-    public void testCreateProduct_withUnauthorizedUser_shouldThrowException() {
+    void testCreateProduct_withUnauthorizedUser_shouldThrowException() {
         // Given
         CreateProductRequest request = createValidProductRequest();
 
@@ -196,7 +196,7 @@ class ProductServiceImplTest {
     }
 
     @Test
-    public void testGetProduct_withExistingProduct_shouldReturnProduct() {
+    void testGetProduct_withExistingProduct_shouldReturnProduct() {
         // Given
         long productId = 1L;
         ProductEntity productEntity = new ProductEntity();
@@ -218,7 +218,7 @@ class ProductServiceImplTest {
     }
 
     @Test
-    public void testGetProduct_withNonExistingProduct_shouldReturnEmpty() {
+    void testGetProduct_withNonExistingProduct_shouldReturnEmpty() {
         // Given
         long productId = 1L;
 
@@ -236,7 +236,7 @@ class ProductServiceImplTest {
     }
 
     @Test
-    public void testUpdateProduct_withValidRequest_shouldUpdateProduct() {
+    void testUpdateProduct_withValidRequest_shouldUpdateProduct() {
         // Given
         long productId = 1L;
         UpdateProductRequest request = createValidUpdateProductRequest();
@@ -274,7 +274,7 @@ class ProductServiceImplTest {
     }
 
     @Test
-    public void testUpdateProduct_withNullRequest_shouldThrowException() {
+    void testUpdateProduct_withNullRequest_shouldThrowException() {
         // Given
         long productId = 1L;
 
@@ -287,7 +287,7 @@ class ProductServiceImplTest {
     }
 
     @Test
-    public void testUpdateProduct_withNonExistentProduct_shouldThrowException() {
+    void testUpdateProduct_withNonExistentProduct_shouldThrowException() {
         // Given
         long productId = 1L;
         UpdateProductRequest request = createValidUpdateProductRequest();
@@ -305,7 +305,7 @@ class ProductServiceImplTest {
     }
 
     @Test
-    public void testUpdateProduct_withNonExistentCity_shouldThrowException() {
+    void testUpdateProduct_withNonExistentCity_shouldThrowException() {
         // Given
         long productId = 1L;
         UpdateProductRequest request = createValidUpdateProductRequest();
@@ -327,7 +327,7 @@ class ProductServiceImplTest {
     }
 
     @Test
-    public void testUpdateProduct_withNonExistentUser_shouldThrowException() {
+    void testUpdateProduct_withNonExistentUser_shouldThrowException() {
         // Given
         long productId = 1L;
         UpdateProductRequest request = createValidUpdateProductRequest();
@@ -351,7 +351,7 @@ class ProductServiceImplTest {
     }
 
     @Test
-    public void testUpdateProduct_withUnauthorizedUser_shouldThrowException() {
+    void testUpdateProduct_withUnauthorizedUser_shouldThrowException() {
         // Given
         long productId = 1L;
         UpdateProductRequest request = createValidUpdateProductRequest();
@@ -380,7 +380,7 @@ class ProductServiceImplTest {
     }
 
     @Test
-    public void testUpdateProduct_withNoContactInformation_shouldThrowException() {
+    void testUpdateProduct_withNoContactInformation_shouldThrowException() {
         // Given
         long productId = 1L;
         UpdateProductRequest request = createValidUpdateProductRequest();
@@ -407,7 +407,7 @@ class ProductServiceImplTest {
     }
 
     @Test
-    public void testDeleteProduct_withExistingProduct_shouldReturnTrue() {
+    void testDeleteProduct_withExistingProduct_shouldReturnTrue() {
         // Given
         long productId = 1L;
 
@@ -422,7 +422,7 @@ class ProductServiceImplTest {
     }
 
     @Test
-    public void testDeleteProduct_withNonExistentProduct_shouldReturnFalse() {
+    void testDeleteProduct_withNonExistentProduct_shouldReturnFalse() {
         // Given
         long productId = 1L;
         doThrow(new EmptyResultDataAccessException(1)).when(productRepository).deleteById(productId);
@@ -438,7 +438,7 @@ class ProductServiceImplTest {
     }
 
     @Test
-    public void testGetProducts_withExistingProducts_shouldReturnProductList() {
+    void testGetProducts_withExistingProducts_shouldReturnProductList() {
         // Given
         ProductEntity productEntity1 = new ProductEntity();
         ProductEntity productEntity2 = new ProductEntity();
@@ -466,7 +466,7 @@ class ProductServiceImplTest {
     }
 
     @Test
-    public void testGetProducts_withNoProducts_shouldReturnEmptyList() {
+    void testGetProducts_withNoProducts_shouldReturnEmptyList() {
         // Given
         when(productRepository.findAll()).thenReturn(Collections.emptyList());
 
@@ -483,7 +483,7 @@ class ProductServiceImplTest {
     }
 
     @Test
-    public void testGetProductsForUser_withValidUser_shouldReturnProductList() {
+    void testGetProductsForUser_withValidUser_shouldReturnProductList() {
         // Given
         long userId = 1L;
         ProductEntity productEntity1 = new ProductEntity();
@@ -514,7 +514,7 @@ class ProductServiceImplTest {
     }
 
     @Test
-    public void testGetProductsForUser_withUnauthorizedUser_shouldThrowException() {
+    void testGetProductsForUser_withUnauthorizedUser_shouldThrowException() {
         // Given
         long userId = 1L;
         long unauthorizedUserId = 2L;
@@ -531,7 +531,7 @@ class ProductServiceImplTest {
     }
 
     @Test
-    public void testGetProductsForUser_withNoProducts_shouldReturnEmptyList() {
+    void testGetProductsForUser_withNoProducts_shouldReturnEmptyList() {
         // Given
         long userId = 1L;
 
@@ -552,7 +552,7 @@ class ProductServiceImplTest {
     }
 
     @Test
-    public void testGetProductsForCategory_withValidCategory_shouldReturnProductList() {
+    void testGetProductsForCategory_withValidCategory_shouldReturnProductList() {
         // Given
         long categoryId = 1L;
         ProductEntity productEntity1 = new ProductEntity();
@@ -581,7 +581,7 @@ class ProductServiceImplTest {
     }
 
     @Test
-    public void testGetProductsForCategory_withNoProductsInCategory_shouldThrowException() {
+    void testGetProductsForCategory_withNoProductsInCategory_shouldThrowException() {
         // Given
         long categoryId = 1L;
 

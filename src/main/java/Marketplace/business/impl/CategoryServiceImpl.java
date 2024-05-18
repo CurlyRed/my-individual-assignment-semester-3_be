@@ -3,6 +3,8 @@ package Marketplace.business.impl;
 import Marketplace.business.CategoryService;
 import Marketplace.business.dto.category.CreateCategoryRequest;
 import Marketplace.business.dto.category.CreateCategoryResponse;
+import Marketplace.business.exception.UnauthorizedDataAccessException;
+import Marketplace.config.security.token.AccessToken;
 import Marketplace.domain.Category;
 import Marketplace.persistence.converter.AttributeConverter;
 import Marketplace.persistence.converter.CategoryConverter;
@@ -28,13 +30,16 @@ CategoryServiceImpl implements CategoryService {
     private final AttributeRepository attributeRepository;
     private final CategoryConverter categoryConverter;
     private final AttributeConverter attributeConverter;
+    private final AccessToken requestAccessToken;
 
     @Override
     public CreateCategoryResponse createCategory(CreateCategoryRequest request) {
         if (request == null) {
             return null;
         }
-
+        if (!requestAccessToken.hasRole("ADMIN")){
+            throw new UnauthorizedDataAccessException("USER_ID_NOT_FROM_LOGGED_IN_USER");
+        }
         CategoryEntity categoryEntity = CategoryEntity.builder()
                 .name(request.getCategoryName())
                 .build();
@@ -65,6 +70,9 @@ CategoryServiceImpl implements CategoryService {
 
     @Override
     public boolean deleteCategory(long categoryId){
+        if (!requestAccessToken.hasRole("ADMIN")){
+            throw new UnauthorizedDataAccessException("USER_ID_NOT_FROM_LOGGED_IN_USER");
+        }
         try {
             categoryRepository.deleteById(categoryId);
             return true;

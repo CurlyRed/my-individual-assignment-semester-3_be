@@ -2,7 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.1.0'
     id 'io.spring.dependency-management' version '1.1.0'
-    id("org.sonarqube") version "4.4.1.3373"
+    id "org.sonarqube" version "4.4.1.3373"
     id "jacoco"
 }
 
@@ -55,10 +55,11 @@ sonar {
         property "sonar.projectKey", "***REMOVED***"
         property "sonar.projectName", "My individual assignment semester 3_BE"
         property "sonar.token", "***REMOVED***"
-        property "sonar.qualityGate.wait", true
+        property "sonar.qualitygate.wait", true
         property "sonar.gradle.skipCompile", true
         property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml"
-        property "sonar.coverage.exclusions", "**/controller/**, **/domain/**, **/config/**, **/persistence/entity**, **/business/exception/**, **/business/dto/**"
+        property "sonar.coverage.exclusions", "**/controller/**, **/domain/**, **/config/**, **/business/dto/**, **/business/exceptions/**, **/persistence/entity/**"
+
     }
 }
 

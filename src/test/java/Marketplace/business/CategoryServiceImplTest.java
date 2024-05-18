@@ -2,7 +2,9 @@ package Marketplace.business;
 
 import Marketplace.business.dto.category.CreateCategoryRequest;
 import Marketplace.business.dto.category.CreateCategoryResponse;
+import Marketplace.business.exception.UnauthorizedDataAccessException;
 import Marketplace.business.impl.CategoryServiceImpl;
+import Marketplace.config.security.token.AccessToken;
 import Marketplace.domain.Attribute;
 import Marketplace.domain.Category;
 import Marketplace.persistence.converter.AttributeConverter;
@@ -11,206 +13,245 @@ import Marketplace.persistence.entity.AttributeEntity;
 import Marketplace.persistence.entity.CategoryEntity;
 import Marketplace.persistence.jpaRepository.AttributeRepository;
 import Marketplace.persistence.jpaRepository.CategoryRepository;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.HttpStatus;
 
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-class CategoryServiceImplTest {
+class CategoriesServiceImplTest {
     @Mock
     private CategoryRepository categoryRepository;
     @Mock
     private AttributeRepository attributeRepository;
     @Mock
+    private AttributeConverter attributeConverter;
+    @Mock
     private CategoryConverter categoryConverter;
     @Mock
-    private AttributeConverter attributeConverter;
+    private AccessToken requestAccessToken;
     @InjectMocks
-    private CategoryServiceImpl categoryService;
+    private CategoryServiceImpl categoriesService;
+
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
     }
 
     @Test
-    void createCategory_CreatesCategory(){
+    public void testCreateCategory_withValidRequest_shouldReturnCreateCategoryResponse() {
         // Given
-        CreateCategoryRequest request = new CreateCategoryRequest();
-        request.setCategoryName("Test Category");
-
-        List<Attribute> attributes = new ArrayList<>();
-        Attribute attribute1 = Attribute.builder()
-                .name("Attribute1")
-                .build();
-        attributes.add(attribute1);
-        Attribute attribute2 = Attribute.builder()
-                .name("Attribute2")
-                .build();
-        attributes.add(attribute2);
-        request.setAttributes(attributes);
+        CreateCategoryRequest request = createValidCategoryRequest();
 
         CategoryEntity savedCategoryEntity = new CategoryEntity();
         savedCategoryEntity.setId(1L);
 
         AttributeEntity attributeEntity = new AttributeEntity();
-        attributeEntity.setId(1L);
+        attributeEntity.setCategory(savedCategoryEntity);
 
-        //Mock
+        when(requestAccessToken.hasRole("ADMIN")).thenReturn(true);
         when(categoryRepository.save(any(CategoryEntity.class))).thenReturn(savedCategoryEntity);
         when(attributeConverter.toEntity(any(Attribute.class))).thenReturn(attributeEntity);
 
         // When
-        CreateCategoryResponse response = categoryService.createCategory(request);
-
-        // Verify
-        verify(categoryRepository, times(2)).save(any(CategoryEntity.class));
-        verify(attributeRepository, times(1)).saveAll(anyList());
+        CreateCategoryResponse response = categoriesService.createCategory(request);
 
         // Then
         assertNotNull(response);
-        assertEquals(savedCategoryEntity.getId(), response.getCategoryId());
-    }
-
-    @Test
-    void getCategory_ReturnsEmptyOptional_WhenCategoryNotFound() {
-        // Given
-        long categoryId = 1L;
-
-        // Mock
-        when(categoryRepository.findById(categoryId)).thenReturn(Optional.empty());
-
-        // When
-        Optional<Category> result = categoryService.getCategory(categoryId);
+        assertEquals(1L, response.getCategoryId());
 
         // Verify
-        verify(categoryRepository, times(1)).findById(categoryId);
-
-        // Then
-        assertFalse(result.isPresent());
+        verify(requestAccessToken, times(1)).hasRole("ADMIN");
+        verify(categoryRepository, times(2)).save(any(CategoryEntity.class));
+        verify(attributeConverter, times(1)).toEntity(any(Attribute.class));
+        verify(attributeRepository, times(1)).saveAll(anyList());
     }
 
     @Test
-    void getCategory_ReturnsCategory_WhenCategoryFound() {
+    public void testCreateCategory_withNullRequest_shouldReturnNull() {
+        // When
+        CreateCategoryResponse response = categoriesService.createCategory(null);
+
+        // Then
+        assertNull(response);
+
+        // Verify
+        verifyNoInteractions(requestAccessToken, categoryRepository, attributeRepository, attributeConverter);
+    }
+
+    @Test
+    public void testCreateCategory_withUnauthorizedUser_shouldThrowException() {
+        // Given
+        CreateCategoryRequest request = createValidCategoryRequest();
+
+        when(requestAccessToken.hasRole("ADMIN")).thenReturn(false);
+
+        // When & Then
+        UnauthorizedDataAccessException exception = assertThrows(UnauthorizedDataAccessException.class, () -> categoriesService.createCategory(request));
+        assertEquals(HttpStatus.FORBIDDEN, exception.getStatusCode());
+
+        // Verify
+        verify(requestAccessToken, times(1)).hasRole("ADMIN");
+        verifyNoInteractions(categoryRepository, attributeRepository, attributeConverter);
+    }
+
+    @Test
+    public void testGetCategory_withExistingCategory_shouldReturnCategory() {
         // Given
         long categoryId = 1L;
-        CategoryEntity categoryEntity = CategoryEntity.builder()
-                .id(categoryId)
-                .build();
-
+        CategoryEntity categoryEntity = new CategoryEntity();
         Category category = new Category();
-        category.setId(categoryId);
 
-        // Mock
         when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(categoryEntity));
         when(categoryConverter.toDomain(categoryEntity)).thenReturn(category);
 
         // When
-        Optional<Category> optionalCategory = categoryService.getCategory(categoryId);
+        Optional<Category> result = categoriesService.getCategory(categoryId);
 
-        // When
+        // Then
+        assertTrue(result.isPresent());
+        assertEquals(category, result.get());
+
+        // Verify
         verify(categoryRepository, times(1)).findById(categoryId);
         verify(categoryConverter, times(1)).toDomain(categoryEntity);
-
-        // Then
-        assertTrue(optionalCategory.isPresent());
-        assertEquals(categoryEntity.getId(), optionalCategory.get().getId());
     }
 
     @Test
-    void deleteCategory_DeleteCategory_WhenCategoryNotFound() {
+    public void testGetCategory_withNonExistentCategory_shouldReturnEmpty() {
         // Given
         long categoryId = 1L;
 
-        // Mock
-        doThrow(EmptyResultDataAccessException.class).when(categoryRepository).deleteById(categoryId);
+        when(categoryRepository.findById(categoryId)).thenReturn(Optional.empty());
 
         // When
-        boolean deletedCategory = categoryService.deleteCategory(categoryId);
-
-        // Verify
-        verify(categoryRepository, times(1)).deleteById(categoryId);
+        Optional<Category> result = categoriesService.getCategory(categoryId);
 
         // Then
-        assertFalse(deletedCategory);
+        assertFalse(result.isPresent());
+
+        // Verify
+        verify(categoryRepository, times(1)).findById(categoryId);
+        verifyNoInteractions(categoryConverter);
     }
 
-
     @Test
-    void deleteCategory_DeleteCategory_WhenCategoryFound() {
+    public void testDeleteCategory_withExistingCategory_shouldReturnTrue() {
         // Given
         long categoryId = 1L;
 
-        // Mock
-        doNothing().when(categoryRepository).deleteById(categoryId);
+        when(requestAccessToken.hasRole("ADMIN")).thenReturn(true);
 
         // When
-        boolean deletedCategory = categoryService.deleteCategory(categoryId);
+        boolean result = categoriesService.deleteCategory(categoryId);
+
+        // Then
+        assertTrue(result);
 
         // Verify
+        verify(requestAccessToken, times(1)).hasRole("ADMIN");
         verify(categoryRepository, times(1)).deleteById(categoryId);
-
-        // Then
-        assertTrue(deletedCategory);
     }
 
     @Test
-    void getCategories_ReturnsEmptyList_WhenCategoriesNotFound(){
-        // Mock
-        when(categoryRepository.findAll()).thenReturn(new ArrayList<>());
+    public void testDeleteCategory_withNonExistentCategory_shouldReturnFalse() {
+        // Given
+        long categoryId = 1L;
+
+        when(requestAccessToken.hasRole("ADMIN")).thenReturn(true);
+        doThrow(new EmptyResultDataAccessException(1)).when(categoryRepository).deleteById(categoryId);
 
         // When
-        List<Category> categories = categoryService.getCategories();
-
-        // Verify
-        verify(categoryRepository, times(1)).findAll();
+        boolean result = categoriesService.deleteCategory(categoryId);
 
         // Then
-        assertNotNull(categories);
-        assertTrue(categories.isEmpty());
+        assertFalse(result);
+
+        // Verify
+        verify(requestAccessToken, times(1)).hasRole("ADMIN");
+        verify(categoryRepository, times(1)).deleteById(categoryId);
     }
 
     @Test
-    void getCategories_ReturnsListOfConvertedCategories_WhenCategoriesFound(){
+    public void testDeleteCategory_withUnauthorizedUser_shouldThrowException() {
         // Given
-        List<CategoryEntity> categoryEntities = new ArrayList<>();
-        categoryEntities.add(CategoryEntity.builder().id(1L).name("Category 1").build());
-        categoryEntities.add(CategoryEntity.builder().id(2L).name("Category 2").build());
+        long categoryId = 1L;
 
-        // Mock
+        when(requestAccessToken.hasRole("ADMIN")).thenReturn(false);
+
+        // When & Then
+        UnauthorizedDataAccessException exception = assertThrows(UnauthorizedDataAccessException.class, () -> categoriesService.deleteCategory(categoryId));
+        assertEquals(HttpStatus.FORBIDDEN, exception.getStatusCode());
+
+        // Verify
+        verify(requestAccessToken, times(1)).hasRole("ADMIN");
+        verifyNoInteractions(categoryRepository);
+    }
+
+    @Test
+    public void testGetCategories_withExistingCategories_shouldReturnCategoryList() {
+        // Given
+        CategoryEntity categoryEntity1 = new CategoryEntity();
+        CategoryEntity categoryEntity2 = new CategoryEntity();
+        Category category1 = new Category();
+        Category category2 = new Category();
+
+        List<CategoryEntity> categoryEntities = Arrays.asList(categoryEntity1, categoryEntity2);
         when(categoryRepository.findAll()).thenReturn(categoryEntities);
-        when(categoryConverter.toDomain(any(CategoryEntity.class)))
-                .thenAnswer(invocation -> {
-                    CategoryEntity entity = invocation.getArgument(0);
-                    return Category.builder()
-                            .id(entity.getId())
-                            .name(entity.getName())
-                            .build();
-                });
+        when(categoryConverter.toDomain(categoryEntity1)).thenReturn(category1);
+        when(categoryConverter.toDomain(categoryEntity2)).thenReturn(category2);
 
         // When
-        List<Category> categories = categoryService.getCategories();
+        List<Category> result = categoriesService.getCategories();
+
+        // Then
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals(category1, result.get(0));
+        assertEquals(category2, result.get(1));
 
         // Verify
         verify(categoryRepository, times(1)).findAll();
-        verify(categoryConverter, times(categoryEntities.size())).toDomain(any(CategoryEntity.class));
+        verify(categoryConverter, times(2)).toDomain(categoryEntity1);
+        verify(categoryConverter, times(2)).toDomain(categoryEntity2);
+    }
+
+    @Test
+    public void testGetCategories_withNoCategories_shouldReturnEmptyList() {
+        // Given
+        when(categoryRepository.findAll()).thenReturn(Collections.emptyList());
+
+        // When
+        List<Category> result = categoriesService.getCategories();
 
         // Then
-        for (int i = 0; i < categoryEntities.size(); i++) {
-            assertEquals(categoryEntities.get(i).getId(), categories.get(i).getId());
-            assertEquals(categoryEntities.get(i).getName(), categories.get(i).getName());
-        }
-        assertNotNull(categories);
-        assertFalse(categories.isEmpty());
-        assertEquals(categoryEntities.size(), categories.size());
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+
+        // Verify
+        verify(categoryRepository, times(1)).findAll();
+        verify(categoryConverter, times(0)).toDomain(any(CategoryEntity.class));
+    }
+
+    private CreateCategoryRequest createValidCategoryRequest() {
+        return CreateCategoryRequest.builder()
+                .categoryName("Test Category")
+                .attributes(Collections.singletonList(
+                        Attribute.builder()
+                                .name("Test Attribute")
+                                .build()
+                ))
+                .build();
     }
 }

@@ -72,6 +72,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
+    @Transactional
     public boolean updateUser(UpdateUserRequest request){
         Optional<UserEntity> userOptional = userRepository.findById(request.getId());
 
@@ -90,6 +91,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public boolean deleteById(long userId){
         try {
             userRepository.deleteById(userId);

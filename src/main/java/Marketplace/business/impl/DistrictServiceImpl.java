@@ -26,8 +26,9 @@ public class DistrictServiceImpl implements DistrictService {
     private final ProductRepository productRepository;
     private final CityRepository cityRepository;
     private final DistrictConverter districtConverter;
-    private final CityConverter cityConverter;
+
     @Override
+    @Transactional
     public List<District> getDistricts(){
         return districtRepository.findAll().stream()
                 .map(districtConverter::toDomain)
