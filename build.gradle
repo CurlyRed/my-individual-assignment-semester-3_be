@@ -29,6 +29,9 @@ dependencies {
     implementation 'org.flywaydb:flyway-core'
     implementation 'org.flywaydb:flyway-mysql'
     implementation 'mysql:mysql-connector-java:8.0.33'
+    implementation 'javax.validation:validation-api:2.0.1.Final'
+    implementation 'org.hibernate.validator:hibernate-validator:6.1.5.Final'
+    implementation 'org.glassfish:javax.el:3.0.0'
 
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'

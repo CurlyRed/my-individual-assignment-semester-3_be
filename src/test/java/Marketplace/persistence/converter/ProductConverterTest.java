@@ -47,6 +47,7 @@ class ProductConverterTest {
                 .id(1L)
                 .name("Test Product")
                 .description("Test Description")
+                .promoted(false)
                 .category(categoryEntity)
                 .product_attributes(new ArrayList<>())
                 .build();
@@ -62,6 +63,7 @@ class ProductConverterTest {
         assertEquals(productEntity.getId(), product.getId());
         assertEquals(productEntity.getName(), product.getName());
         assertEquals(productEntity.getDescription(), product.getDescription());
+        assertEquals(productEntity.getPromoted(), product.getPromoted());
         assertNotNull(product.getCategory());
         assertEquals(categoryEntity.getId(), product.getCategory().getId());
         assertEquals(categoryEntity.getName(), product.getCategory().getName());
@@ -88,6 +90,7 @@ class ProductConverterTest {
                 .id(1L)
                 .name("Test Product")
                 .description("Test Description")
+                .promoted(true)
                 .category(category)
                 .productAttributes(new ArrayList<>())
                 .build();
@@ -103,6 +106,7 @@ class ProductConverterTest {
         assertEquals(product.getId(), productEntity.getId());
         assertEquals(product.getName(), productEntity.getName());
         assertEquals(product.getDescription(), productEntity.getDescription());
+        assertEquals(product.getPromoted(), productEntity.getPromoted());
         assertNotNull(productEntity.getCategory());
         assertEquals(category.getId(), productEntity.getCategory().getId());
         assertEquals(category.getName(), productEntity.getCategory().getName());

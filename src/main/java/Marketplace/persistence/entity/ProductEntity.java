@@ -33,6 +33,9 @@ public class ProductEntity {
     @Column(name = "date_of_post")
     private Date date_of_post;
 
+    @Column(name = "promoted")
+    private Boolean promoted;
+
     @ManyToOne
     @JoinColumn(name = "category_id")
     private CategoryEntity category;

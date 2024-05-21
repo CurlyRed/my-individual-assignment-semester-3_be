@@ -1,5 +1,6 @@
 package Marketplace.persistence.entity;
 
+import Marketplace.enums.TransactionType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,8 +21,9 @@ public class TransactionEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "type")
-    private String type;
+    private TransactionType type;
 
     @Column(name = "amount")
     private Double amount;

@@ -18,5 +18,6 @@ public class Product {
     private Date date_of_post;
     private Category category;
     private ContactInformation contact_information;
+    private Boolean promoted;
     private List<ProductAttribute> productAttributes;
 }

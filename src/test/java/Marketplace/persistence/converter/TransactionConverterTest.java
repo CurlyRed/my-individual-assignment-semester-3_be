@@ -1,6 +1,7 @@
 package Marketplace.persistence.converter;
 
 import Marketplace.domain.Transaction;
+import Marketplace.enums.TransactionType;
 import Marketplace.persistence.entity.TransactionEntity;
 import Marketplace.persistence.entity.UserEntity;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,7 +29,7 @@ class TransactionConverterTest {
         UserEntity userEntity = new UserEntity();
         TransactionEntity transactionEntity = new TransactionEntity();
         transactionEntity.setId(1L);
-        transactionEntity.setType("Credit");
+        transactionEntity.setType(TransactionType.TOP_UP);
         transactionEntity.setAmount(100.0);
         transactionEntity.setDescription("Test transaction");
         transactionEntity.setCreated_at(new Date());

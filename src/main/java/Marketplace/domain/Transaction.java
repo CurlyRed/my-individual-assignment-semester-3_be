@@ -1,5 +1,6 @@
 package Marketplace.domain;
 
+import Marketplace.enums.TransactionType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,7 +14,7 @@ import java.util.Date;
 @NoArgsConstructor
 public class Transaction {
     private Long id;
-    private String type;
+    private TransactionType type;
     private Double amount;
     private String description;
     private Date created_at;
