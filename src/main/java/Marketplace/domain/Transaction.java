@@ -19,4 +19,5 @@ public class Transaction {
     private String description;
     private Date created_at;
     private User user;
+    private Product product;
 }

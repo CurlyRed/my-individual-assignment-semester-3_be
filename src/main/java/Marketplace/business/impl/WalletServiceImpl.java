@@ -114,6 +114,7 @@ public class WalletServiceImpl implements WalletService {
         if (!productOptional.isPresent()) {
             throw new IllegalArgumentException("Product not found for the provided product ID");
         }
+
         ProductEntity product = productOptional.get();
         product.setPromoted(true);
         productRepository.save(product);
@@ -124,6 +125,7 @@ public class WalletServiceImpl implements WalletService {
                 .description("Purchased promotion for product ID: " + request.getProductId())
                 .created_at(new Date())
                 .user(userBalance.getUser())
+                .product(product)
                 .build();
         transactionRepository.save(transaction);
     }

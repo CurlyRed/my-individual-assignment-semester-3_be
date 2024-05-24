@@ -16,11 +16,12 @@ class TransactionConverterTest {
 
     private TransactionConverter transactionConverter;
     private UserConverter userConverter;
+    private ProductConverter productConverter;
 
     @BeforeEach
     void setUp() {
         userConverter = mock(UserConverter.class);
-        transactionConverter = new TransactionConverter(userConverter);
+        transactionConverter = new TransactionConverter(userConverter, productConverter);
     }
 
     @Test

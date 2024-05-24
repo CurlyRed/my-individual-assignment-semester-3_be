@@ -10,7 +10,9 @@ import Marketplace.config.security.token.AccessToken;
 import Marketplace.domain.User;
 import Marketplace.persistence.converter.UserConverter;
 import Marketplace.persistence.entity.RoleEntity;
+import Marketplace.persistence.entity.UserInformationEntity;
 import Marketplace.persistence.jpaRepository.RoleRepository;
+import Marketplace.persistence.jpaRepository.UserInformationRepository;
 import Marketplace.persistence.jpaRepository.UserRepository;
 import Marketplace.persistence.entity.UserEntity;
 
@@ -20,6 +22,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.Optional;
 
 @Service
@@ -27,13 +30,14 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final UserInformationRepository userInformationRepository;
     private final UserConverter userConverter;
     private final PasswordEncoder passwordEncoder;
     private final AccessToken requestAccessToken;
 
     @Override
     @Transactional
-    public CreateUserResponse createUser(CreateUserRequest request){
+    public CreateUserResponse createUser(CreateUserRequest request) {
         if (request == null) {
             return null;
         }
@@ -43,22 +47,35 @@ public class UserServiceImpl implements UserService {
         }
 
         Optional<RoleEntity> optionalRoleEntity = roleRepository.findById(request.getRoleId());
-        RoleEntity roleEntity = optionalRoleEntity.orElseThrow(() ->new IllegalArgumentException("Role not found"));
+        RoleEntity roleEntity = optionalRoleEntity.orElseThrow(() -> new IllegalArgumentException("Role not found"));
 
         String encodedPassword = passwordEncoder.encode(request.getPassword());
 
         UserEntity userEntity = UserEntity.builder()
                 .email(request.getEmail())
                 .password(encodedPassword)
+                .date_of_registry(new Date())
                 .role(roleEntity)
                 .build();
 
         userEntity = userRepository.save(userEntity);
 
+        UserInformationEntity userInformationEntity = UserInformationEntity.builder()
+                .user(userEntity)
+                .firstName(null)
+                .lastName(null)
+                .city(null)
+                .age(null)
+                .gender(null)
+                .build();
+
+        userInformationRepository.save(userInformationEntity);
+
         return CreateUserResponse.builder()
                 .userId(userEntity.getId())
                 .build();
     }
+
 
     @Override
     @Transactional
@@ -80,8 +97,6 @@ public class UserServiceImpl implements UserService {
             UserEntity user = userOptional.get();
             user.setPassword(request.getPassword());
             user.setEmail(request.getEmail());
-            user.setFirstName(request.getFirstName());
-            user.setLastName(request.getLastName());
 
             userRepository.save(user);
             return true;

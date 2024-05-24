@@ -17,10 +17,9 @@ public class User {
     private Long id;
     private String email;
     private String password;
-    private String firstName;
-    private String lastName;
     private Date date_of_registry;
     private Role role;
     private List<Product> products;
     private UserBalance balance;
+    private UserInformation userInformation;;
 }

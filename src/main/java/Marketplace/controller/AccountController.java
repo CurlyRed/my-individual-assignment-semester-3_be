@@ -36,8 +36,6 @@ public class AccountController {
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (EmailAlreadyExistsException e) {
             return ResponseEntity.status(e.getStatusCode()).body("Email already exists. Please use another one.");
-        } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unknown error occurred:" + e.getMessage());
         }
     }
 

@@ -16,6 +16,7 @@ public class UserConverter {
     public final RoleConverter roleConverter;
     public final ProductConverter productConverter;
     public final UserBalanceConverter userBalanceConverter;
+    public final UserInformationConverter userInformationConverter;
 
     public User toDomain(UserEntity userEntity){
         if(userEntity == null){
@@ -26,9 +27,8 @@ public class UserConverter {
                 .id(userEntity.getId())
                 .email(userEntity.getEmail())
                 .password(userEntity.getPassword())
-                .firstName(userEntity.getFirstName())
-                .lastName(userEntity.getLastName())
                 .date_of_registry(userEntity.getDate_of_registry())
+                .userInformation(userInformationConverter.toDomain(userEntity.getUserInformation()))
                 .role(roleConverter.toDomain(userEntity.getRole()))
                 .products(userEntity.getProducts().stream()
                         .map(productConverter::toDomain)
