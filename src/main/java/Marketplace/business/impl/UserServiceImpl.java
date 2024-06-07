@@ -9,8 +9,10 @@ import Marketplace.business.exception.UnauthorizedDataAccessException;
 import Marketplace.config.security.token.AccessToken;
 import Marketplace.domain.User;
 import Marketplace.persistence.converter.UserConverter;
+import Marketplace.persistence.entity.CityEntity;
 import Marketplace.persistence.entity.RoleEntity;
 import Marketplace.persistence.entity.UserInformationEntity;
+import Marketplace.persistence.jpaRepository.CityRepository;
 import Marketplace.persistence.jpaRepository.RoleRepository;
 import Marketplace.persistence.jpaRepository.UserInformationRepository;
 import Marketplace.persistence.jpaRepository.UserRepository;
@@ -23,6 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -31,6 +34,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final UserInformationRepository userInformationRepository;
+    private final CityRepository cityRepository;
     private final UserConverter userConverter;
     private final PasswordEncoder passwordEncoder;
     private final AccessToken requestAccessToken;
@@ -76,7 +80,6 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
-
     @Override
     @Transactional
     public Optional<User> getUser(long userId) {
@@ -87,18 +90,61 @@ public class UserServiceImpl implements UserService {
                 .map(userConverter::toDomain);
     }
 
-
     @Override
     @Transactional
-    public boolean updateUser(UpdateUserRequest request){
-        Optional<UserEntity> userOptional = userRepository.findById(request.getId());
+    public boolean updateUser(UpdateUserRequest request) {
+        if (!Objects.equals(requestAccessToken.getUserId(), request.getUserId())) {
+            throw new UnauthorizedDataAccessException("USER_ID_NOT_FROM_LOGGED_IN_USER");
+        }
+        Optional<UserEntity> userOptional = userRepository.findById(request.getUserId());
 
         if (userOptional.isPresent()) {
             UserEntity user = userOptional.get();
-            user.setPassword(request.getPassword());
-            user.setEmail(request.getEmail());
+
+            if (request.getPassword() != null && !request.getPassword().isEmpty()) {
+                user.setPassword(passwordEncoder.encode(request.getPassword()));
+            }
 
             userRepository.save(user);
+
+            CityEntity city = null;
+            if (request.getCity() != null) {
+                Optional<CityEntity> cityOptional = cityRepository.findById(request.getCity());
+                city = cityOptional.orElse(null);
+            }
+
+            Optional<UserInformationEntity> userInformationOptional = userInformationRepository.findByUserId(user.getId());
+
+            if (userInformationOptional.isPresent()) {
+                UserInformationEntity userInformation = userInformationOptional.get();
+
+                boolean isUserInformationUpdated = false;
+                if (request.getFirstName() != null) {
+                    userInformation.setFirstName(request.getFirstName());
+                    isUserInformationUpdated = true;
+                }
+                if (request.getLastName() != null) {
+                    userInformation.setLastName(request.getLastName());
+                    isUserInformationUpdated = true;
+                }
+                if (city != null) {
+                    userInformation.setCity(city);
+                    isUserInformationUpdated = true;
+                }
+                if (request.getAge() != null) {
+                    userInformation.setAge(request.getAge());
+                    isUserInformationUpdated = true;
+                }
+                if (request.getGender() != null) {
+                    userInformation.setGender(request.getGender());
+                    isUserInformationUpdated = true;
+                }
+
+                if (isUserInformationUpdated) {
+                    userInformationRepository.save(userInformation);
+                }
+            }
+
             return true;
         } else {
             return false;

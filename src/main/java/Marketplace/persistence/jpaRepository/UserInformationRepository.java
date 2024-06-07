@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserInformationRepository extends JpaRepository<UserInformationEntity, Long> {
     @Query("SELECT u.age, COUNT(u) FROM UserInformationEntity u GROUP BY u.age")
@@ -20,4 +21,6 @@ public interface UserInformationRepository extends JpaRepository<UserInformation
             "JOIN c.district d " +
             "GROUP BY d.name, c.name")
     List<Object[]> countUsersByLocation();
+
+    Optional<UserInformationEntity> findByUserId(Long id);
 }

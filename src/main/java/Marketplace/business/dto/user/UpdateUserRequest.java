@@ -1,5 +1,6 @@
 package Marketplace.business.dto.user;
 
+import Marketplace.enums.Gender;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,15 +14,12 @@ import jakarta.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UpdateUserRequest {
-
-    private long id;
-    @NotBlank
+    private Long userId;
     private String password;
-    @NotBlank
-    private String email;
-    @NotBlank
     private String firstName;
-    @NotBlank
     private String lastName;
-
+    private Long city;
+    private Integer age;
+    private Gender gender;
 }
+

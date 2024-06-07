@@ -57,9 +57,13 @@ public class AccountController {
     @PutMapping("{id}")
     public ResponseEntity<Void> updateUser(@PathVariable("id") long id,
                                            @RequestBody @Valid UpdateUserRequest request){
-        request.setId(id);
-        userService.updateUser(request);
-        return ResponseEntity.noContent().build();
+        request.setUserId(id);
+        boolean isUpdated = userService.updateUser(request);
+        if (isUpdated) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @RolesAllowed({"USER", "ADMIN"})
