@@ -22,8 +22,18 @@ public class ChatController {
     private final ChatService chatService;
 
     @MessageMapping("/message")
-    public Message sendMessage(@Payload MessageRequest messageRequest) {
-        return chatService.sendMessage(messageRequest);
+    public ResponseEntity<String> sendMessage(@Payload MessageRequest messageRequest) {
+        chatService.sendMessage(messageRequest);
+        return ResponseEntity.ok("Message sent.");
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<Chat> createChat(@RequestBody MessageRequest messageRequest) {
+        Chat newChat = chatService.createChat(
+                messageRequest.getBuyerId(),
+                messageRequest.getSellerId(),
+                messageRequest.getProductId());
+        return ResponseEntity.ok(newChat);
     }
 
     @GetMapping("/user/{userId}")

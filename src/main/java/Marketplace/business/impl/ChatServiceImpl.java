@@ -42,41 +42,58 @@ public class ChatServiceImpl implements ChatService {
     private SimpMessagingTemplate messagingTemplate;
 
     @Override
-    public Message sendMessage(MessageRequest messageRequest) {
+    public void sendMessage(MessageRequest messageRequest) {
         if (messageRequest == null) {
             throw new InvalidRequestException("Message cannot be null");
         }
 
-        ChatEntity chat = chatRepository.findById(messageRequest.getChatId()).orElse(null);
+        log.info("Received message request: {}", messageRequest);
 
-        if (chat == null) {
-            UserEntity buyer = userRepository.findById(messageRequest.getBuyerId()).orElseThrow(() -> new RuntimeException("Buyer not found"));
-            UserEntity seller = userRepository.findById(messageRequest.getSellerId()).orElseThrow(() -> new RuntimeException("Seller not found"));
-            ProductEntity product = productRepository.findById(messageRequest.getProductId()).orElseThrow(() -> new RuntimeException("Product not found"));
+        ChatEntity chat = chatRepository.findById(messageRequest.getChatId())
+                .orElseThrow(() -> new RuntimeException("Chat not found"));
 
-            chat = ChatEntity.builder()
-                    .buyer(buyer)
-                    .seller(seller)
-                    .product(product)
-                    .createdAt(new Date())
-                    .deleted(false)
-                    .build();
-            chat = chatRepository.save(chat);
-        }
-
+        // Create and save the message
         MessageEntity message = MessageEntity.builder()
                 .chat(chat)
-                .sender(userRepository.findById(messageRequest.getSenderId()).orElseThrow(() -> new RuntimeException("Sender not found")))
+                .sender(userRepository.findById(messageRequest.getSenderId())
+                        .orElseThrow(() -> new RuntimeException("Sender not found")))
                 .content(messageRequest.getContent())
                 .timestamp(LocalDateTime.now())
                 .build();
 
         messageRepository.save(message);
+        log.info("Message saved with content: {}", message.getContent());
 
+        // Convert and send the message to the appropriate topic
         Message domainMessage = messageConverter.toDomain(message);
         messagingTemplate.convertAndSend("/topic/chat/" + chat.getId(), domainMessage);
 
-        return domainMessage;
+        log.info("Message sent to topic /topic/chat/{}", chat.getId());
+    }
+
+    @Override
+    public Chat createChat(Long buyerId, Long sellerId, Long productId) {
+        log.info("Creating a new chat for buyerId: {}, sellerId: {}, productId: {}",
+                buyerId, sellerId, productId);
+
+        UserEntity buyer = userRepository.findById(buyerId)
+                .orElseThrow(() -> new RuntimeException("Buyer not found"));
+        UserEntity seller = userRepository.findById(sellerId)
+                .orElseThrow(() -> new RuntimeException("Seller not found"));
+        ProductEntity product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        ChatEntity chat = ChatEntity.builder()
+                .buyer(buyer)
+                .seller(seller)
+                .product(product)
+                .createdAt(new Date())
+                .deleted(false)
+                .build();
+        chat = chatRepository.save(chat);
+        log.info("New chat created with id: {}", chat.getId());
+
+        return chatConverter.toDomain(chat);
     }
 
     @Override

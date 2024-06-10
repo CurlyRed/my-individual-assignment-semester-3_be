@@ -52,6 +52,7 @@ public class WebSecurityConfig {
                                 .requestMatchers(HttpMethod.GET, "/locations/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/users/product/{productId}").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/chats/**").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/chats/**").permitAll()
                                 .requestMatchers("/ws/**").permitAll()
                                 .anyRequest().authenticated()
                 )

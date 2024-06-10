@@ -10,6 +10,7 @@ public interface ChatService {
     List<Chat> getChatsByUserId(long userId);
     void deleteChat(long chatId);
     void recoverChat(long chatId);
-    Message sendMessage(MessageRequest message);
+    void sendMessage(MessageRequest message);
     List<Message> getMessagesByChatId(long chatId);
+    Chat createChat(Long buyerId, Long sellerId, Long productId);
 }
