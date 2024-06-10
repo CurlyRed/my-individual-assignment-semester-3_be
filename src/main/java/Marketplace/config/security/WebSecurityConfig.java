@@ -28,7 +28,8 @@ public class WebSecurityConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedOrigins("http://localhost:5173", "http://localhost:4173")
-                        .allowedMethods("GET", "PUT", "DELETE", "POST", "PATCH");
+                        .allowedMethods("GET", "PUT", "DELETE", "POST", "PATCH")
+                        .allowedHeaders("*");
             }
         };
     }
@@ -50,6 +51,7 @@ public class WebSecurityConfig {
                                 .requestMatchers(HttpMethod.GET, "/products/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/locations/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/users/product/{productId}").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/chats/**").permitAll()
                                 .requestMatchers("/ws/**").permitAll()
                                 .anyRequest().authenticated()
                 )

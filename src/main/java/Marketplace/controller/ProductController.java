@@ -27,12 +27,8 @@ public class ProductController {
     @RolesAllowed({"USER"})
     @PostMapping
     public ResponseEntity<CreateProductResponse> createProduct(@RequestBody @Valid CreateProductRequest request){
-        try{
-            CreateProductResponse response = productService.createProduct(request);
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        } catch (UnauthorizedDataAccessException e){
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
+        CreateProductResponse response = productService.createProduct(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping("{id}")
@@ -44,16 +40,8 @@ public class ProductController {
     @RolesAllowed({"USER", "ADMIN", "SUPPORT"})
     @PutMapping("{id}")
     public ResponseEntity<Void> updateProduct(@PathVariable(value = "id") final long productId, @RequestBody @Valid UpdateProductRequest request){
-        try {
-            productService.updateProduct(productId, request);
-            return ResponseEntity.ok().build();
-        } catch (UnauthorizedDataAccessException e){
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        } catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().build();
-        } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+        productService.updateProduct(productId, request);
+        return ResponseEntity.ok().build();
     }
 
     @RolesAllowed({"USER", "ADMIN"})
@@ -72,22 +60,13 @@ public class ProductController {
     @RolesAllowed({"USER", "ADMIN", "SUPPORT"})
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<Product>> getProductForUser(@PathVariable long userId){
-        try {
-            List<Product> products = productService.getProductsForUser(userId);
-            return ResponseEntity.ok().body(products);
-        } catch (UnauthorizedDataAccessException e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
+        List<Product> products = productService.getProductsForUser(userId);
+        return ResponseEntity.ok().body(products);
     }
 
     @GetMapping("/category/{categoryId}")
     public ResponseEntity<List<Product>> getProductsForCategory(@PathVariable long categoryId){
-        try{
             List<Product> products = productService.getProductsForCategory(categoryId);
             return ResponseEntity.ok().body(products);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
-        }
-
     }
 }

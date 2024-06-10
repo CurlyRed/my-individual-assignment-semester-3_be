@@ -229,7 +229,7 @@ class UserServiceImplTest {
         assertEquals(request.getLastName(), userEntity.getLastName());
 
         // Verify
-        verify(userRepository, times(1)).findById(request.getId());
+        verify(userRepository, times(1)).findById(request.getUserId());
         verify(userRepository, times(1)).save(userEntity);
     }
 
@@ -238,7 +238,7 @@ class UserServiceImplTest {
         // Given
         UpdateUserRequest request = createValidUpdateUserRequest();
 
-        when(userRepository.findById(request.getId())).thenReturn(Optional.empty());
+        when(userRepository.findById(request.getUserId())).thenReturn(Optional.empty());
 
         // When
         boolean result = userService.updateUser(request);

@@ -1,10 +1,15 @@
 package Marketplace.business;
 
+import Marketplace.business.dto.messaging.MessageRequest;
 import Marketplace.domain.Chat;
+import Marketplace.domain.Message;
 
 import java.util.List;
 
 public interface ChatService {
-    List<Chat> getChatsById(long userId);
-
+    List<Chat> getChatsByUserId(long userId);
+    void deleteChat(long chatId);
+    void recoverChat(long chatId);
+    Message sendMessage(MessageRequest message);
+    List<Message> getMessagesByChatId(long chatId);
 }

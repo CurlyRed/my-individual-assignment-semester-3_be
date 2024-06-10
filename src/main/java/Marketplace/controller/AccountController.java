@@ -31,26 +31,16 @@ public class AccountController {
     //CRUD OF USERS
     @PostMapping()
     public ResponseEntity<Object> createUser(@RequestBody @Valid CreateUserRequest request) {
-        try {
-            CreateUserResponse response = userService.createUser(request);
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        } catch (EmailAlreadyExistsException e) {
-            return ResponseEntity.status(e.getStatusCode()).body("Email already exists. Please use another one.");
-        }
+        CreateUserResponse response = userService.createUser(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @RolesAllowed({"USER", "ADMIN", "SUPPORT"})
     @GetMapping("{id}")
     public ResponseEntity<User> getUser(@PathVariable(value = "id") final long userId){
-        try{
-            final Optional<User> userOptional = userService.getUser(userId);
-            return userOptional.map(user -> ResponseEntity.ok().body(user))
-                    .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
-        } catch (UnauthorizedDataAccessException e) {
-            return ResponseEntity.status(e.getStatusCode()).build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+        final Optional<User> userOptional = userService.getUser(userId);
+        return userOptional.map(user -> ResponseEntity.ok().body(user))
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     @RolesAllowed({"USER"})
@@ -88,13 +78,7 @@ public class AccountController {
     // AUTHENTICATION & AUTHORIZATION
     @PostMapping("/auth/login")
     public ResponseEntity<Object> login(@RequestBody @Valid LoginRequest request) {
-        try {
-            LoginResponse loginResponse = authenticationService.login(request);
-            return ResponseEntity.status(HttpStatus.CREATED).body((Object) loginResponse);
-        } catch (InvalidCredentialsException e) {
-            return ResponseEntity.status(e.getStatusCode()).body((Object) "Invalid credentials. Please try again.");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body((Object) e.getMessage());
-        }
+        LoginResponse loginResponse = authenticationService.login(request);
+        return ResponseEntity.status(HttpStatus.OK).body(loginResponse);
     }
 }

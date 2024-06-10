@@ -25,10 +25,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         UserEntity user = userRepository.findByEmail(loginRequest.getEmail());
 
         if(user == null){
-            throw new InvalidCredentialsException();
+            throw new InvalidCredentialsException("Email or password is incorrect. Please try again.");
         }
         if(!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())){
-            throw new InvalidCredentialsException();
+            throw new InvalidCredentialsException("Email or password is incorrect. Please try again.");
         }
 
         String accessToken = generateAccessToken(user);

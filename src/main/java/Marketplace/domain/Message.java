@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -16,5 +16,5 @@ public class Message {
     private Chat chat;
     private User sender;
     private String content;
-    private Date timeStamp;
+    private LocalDateTime timeStamp;
 }

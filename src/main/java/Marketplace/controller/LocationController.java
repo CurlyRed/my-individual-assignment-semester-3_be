@@ -25,11 +25,7 @@ public class LocationController {
 
     @GetMapping("/product/{productId}")
     public ResponseEntity<GetLocationForProductResponse> getLocationForProduct(@PathVariable Long productId) {
-        try {
-            GetLocationForProductResponse response = districtService.getLocationForProduct(productId);
-            return ResponseEntity.ok().body(response);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
-        }
+        GetLocationForProductResponse response = districtService.getLocationForProduct(productId);
+        return ResponseEntity.ok().body(response);
     }
 }

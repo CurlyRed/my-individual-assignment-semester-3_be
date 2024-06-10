@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
         }
 
         if (userRepository.findByEmail(request.getEmail()) != null) {
-            throw new EmailAlreadyExistsException();
+            throw new EmailAlreadyExistsException("Email already exists. Please try again.");
         }
 
         Optional<RoleEntity> optionalRoleEntity = roleRepository.findById(request.getRoleId());
@@ -83,9 +83,6 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public Optional<User> getUser(long userId) {
-        if (!requestAccessToken.hasRole("ADMIN") && requestAccessToken.getUserId() != userId) {
-            throw new UnauthorizedDataAccessException("USER_ID_NOT_FROM_LOGGED_IN_USER");
-        }
         return userRepository.findById(userId)
                 .map(userConverter::toDomain);
     }
