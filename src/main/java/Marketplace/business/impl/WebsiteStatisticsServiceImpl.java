@@ -42,30 +42,35 @@ public class WebsiteStatisticsServiceImpl implements WebsiteStatisticsService {
     @Transactional
     @Override
     public List<Object[]> getUserDemographicsByAge() {
+
         return userInformationRepository.countUsersByAge();
     }
 
     @Transactional
     @Override
     public List<Object[]> getUserDemographicsByGender() {
+
         return userInformationRepository.countUsersByGender();
     }
 
     @Transactional
     @Override
     public List<Object[]> getUserDemographicsByLocation() {
+
         return userInformationRepository.countUsersByLocation();
     }
 
     @Transactional
     @Override
     public long getTotalProducts() {
+
         return productRepository.countAllProducts();
     }
 
     @Transactional
     @Override
     public long getPromotedProducts() {
+
         return productRepository.countPromotedProducts();
     }
 
@@ -102,6 +107,7 @@ public class WebsiteStatisticsServiceImpl implements WebsiteStatisticsService {
     @Transactional
     @Override
     public List<Object[]> getProductListingsByCategory() {
+
         return productRepository.countProductsByCategory();
     }
 }

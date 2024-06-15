@@ -5,7 +5,11 @@ import Marketplace.business.dto.user.CreateUserRequest;
 import Marketplace.business.dto.user.CreateUserResponse;
 import Marketplace.business.dto.user.UpdateUserRequest;
 import Marketplace.business.exception.EmailAlreadyExistsException;
+import Marketplace.business.exception.InvalidRequestException;
 import Marketplace.business.exception.UnauthorizedDataAccessException;
+import Marketplace.business.validators.AmountValidator;
+import Marketplace.business.validators.EmailValidator;
+import Marketplace.business.validators.PasswordValidator;
 import Marketplace.config.security.token.AccessToken;
 import Marketplace.domain.User;
 import Marketplace.persistence.converter.UserConverter;
@@ -36,6 +40,9 @@ public class UserServiceImpl implements UserService {
     private final UserInformationRepository userInformationRepository;
     private final CityRepository cityRepository;
     private final UserConverter userConverter;
+    private final EmailValidator emailValidator;
+    private final PasswordValidator passwordValidator;
+    private final AmountValidator amountValidator;
     private final PasswordEncoder passwordEncoder;
     private final AccessToken requestAccessToken;
 
@@ -44,6 +51,14 @@ public class UserServiceImpl implements UserService {
     public CreateUserResponse createUser(CreateUserRequest request) {
         if (request == null) {
             return null;
+        }
+
+        if (!emailValidator.isValid(request.getEmail())) {
+            throw new InvalidRequestException("Invalid email.");
+        }
+
+        if (!passwordValidator.isValid(request.getPassword())) {
+            throw new InvalidRequestException("Invalid password.");
         }
 
         if (userRepository.findByEmail(request.getEmail()) != null) {
@@ -93,6 +108,15 @@ public class UserServiceImpl implements UserService {
         if (!Objects.equals(requestAccessToken.getUserId(), request.getUserId())) {
             throw new UnauthorizedDataAccessException("USER_ID_NOT_FROM_LOGGED_IN_USER");
         }
+
+        if(!amountValidator.isValid(Double.valueOf(request.getAge()))){
+            throw new InvalidRequestException("Invalid age, please try again.");
+        }
+
+        if(!passwordValidator.isValid(request.getPassword())) {
+            throw new InvalidRequestException("Invalid password.");
+        }
+
         Optional<UserEntity> userOptional = userRepository.findById(request.getUserId());
 
         if (userOptional.isPresent()) {

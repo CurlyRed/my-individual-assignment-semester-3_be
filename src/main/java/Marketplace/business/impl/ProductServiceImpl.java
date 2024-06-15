@@ -4,7 +4,11 @@ import Marketplace.business.ProductService;
 import Marketplace.business.dto.product.CreateProductRequest;
 import Marketplace.business.dto.product.CreateProductResponse;
 import Marketplace.business.dto.product.UpdateProductRequest;
+import Marketplace.business.exception.InvalidRequestException;
 import Marketplace.business.exception.UnauthorizedDataAccessException;
+import Marketplace.business.validators.AmountValidator;
+import Marketplace.business.validators.EmailValidator;
+import Marketplace.business.validators.PhoneNumberValidator;
 import Marketplace.config.security.token.AccessToken;
 import Marketplace.domain.Product;
 import Marketplace.persistence.converter.ProductConverter;
@@ -31,6 +35,9 @@ public class ProductServiceImpl implements ProductService {
     private final ProductConverter productConverter;
     private final ProductAttributeRepository productAttributeRepository;
     private final ContactInformationRepository contactInformationRepository;
+    private final AmountValidator amountValidator;
+    private final PhoneNumberValidator phoneNumberValidator;
+    private final EmailValidator emailValidator;
     private final AccessToken requestAccessToken;
     private final String unauthorizedExceptionMessage = "USER_ID_NOT_FROM_LOGGED_IN_USER";
 
@@ -39,6 +46,18 @@ public class ProductServiceImpl implements ProductService {
     public CreateProductResponse createProduct(CreateProductRequest request) {
         if (request == null) {
             return null;
+        }
+
+        if (!amountValidator.isValid(request.getProductPrice())) {
+            throw new InvalidRequestException("Amount should be greater than zero.");
+        }
+
+        if(!phoneNumberValidator.isValid(request.getPhone_number())){
+            throw new InvalidRequestException("Invalid phone number");
+        }
+
+        if(!emailValidator.isValid(request.getEmail())){
+            throw new InvalidRequestException("Invalid email");
         }
 
         CategoryEntity categoryEntity = categoryRepository.findById(request.getCategoryId())
@@ -112,6 +131,18 @@ public class ProductServiceImpl implements ProductService {
             throw new IllegalArgumentException("Update request cannot be null");
         }
 
+        if (!amountValidator.isValid(request.getProductPrice())) {
+            throw new InvalidRequestException("Amount should be greater than zero.");
+        }
+
+        if(!phoneNumberValidator.isValid(request.getPhone_number())){
+            throw new InvalidRequestException("Invalid phone number");
+        }
+
+        if(!emailValidator.isValid(request.getEmail())){
+            throw new InvalidRequestException("Invalid email");
+        }
+
         ProductEntity existingProduct = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("Product not found"));
 
@@ -127,7 +158,7 @@ public class ProductServiceImpl implements ProductService {
 
         ContactInformationEntity contactInformation = existingProduct.getContact_information();
         if (contactInformation == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Contact information not found");
         }
         contactInformation.setContact_person(request.getContact_person());
         contactInformation.setEmail(request.getEmail());

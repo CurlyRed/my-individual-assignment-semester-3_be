@@ -1,9 +1,9 @@
-package Marketplace.business;
+package Marketplace.business.impl;
 
 import Marketplace.business.dto.category.CreateCategoryRequest;
 import Marketplace.business.dto.category.CreateCategoryResponse;
+import Marketplace.business.exception.DuplicateCategoryNameException;
 import Marketplace.business.exception.UnauthorizedDataAccessException;
-import Marketplace.business.impl.CategoryServiceImpl;
 import Marketplace.config.security.token.AccessToken;
 import Marketplace.domain.Attribute;
 import Marketplace.domain.Category;
@@ -104,6 +104,25 @@ class CategoriesServiceImplTest {
         // Verify
         verify(requestAccessToken, times(1)).hasRole("ADMIN");
         verifyNoInteractions(categoryRepository, attributeRepository, attributeConverter);
+    }
+
+    @Test
+    void testCreateCategory_withDuplicateCategoryName_shouldThrowException() {
+        // Given
+        CreateCategoryRequest request = createValidCategoryRequest();
+        CategoryEntity existingCategoryEntity = new CategoryEntity();
+        existingCategoryEntity.setName(request.getCategoryName());
+
+        when(requestAccessToken.hasRole("ADMIN")).thenReturn(true);
+        when(categoryRepository.findByName(request.getCategoryName())).thenReturn(Optional.of(existingCategoryEntity));
+
+        // When & Then
+        assertThrows(DuplicateCategoryNameException.class, () -> categoriesService.createCategory(request));
+
+        // Verify
+        verify(categoryRepository, times(1)).findByName(request.getCategoryName());
+        verifyNoMoreInteractions(categoryRepository);
+        verifyNoInteractions(attributeRepository);
     }
 
     @Test

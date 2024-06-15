@@ -1,7 +1,6 @@
-package Marketplace.business;
+package Marketplace.business.impl;
 
 import Marketplace.business.dto.product.GetLocationForProductResponse;
-import Marketplace.business.impl.DistrictServiceImpl;
 import Marketplace.domain.District;
 import Marketplace.persistence.converter.DistrictConverter;
 import Marketplace.persistence.entity.CityEntity;

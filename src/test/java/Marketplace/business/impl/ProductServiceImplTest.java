@@ -1,9 +1,12 @@
-package Marketplace.business;
+package Marketplace.business.impl;
 
 import Marketplace.business.dto.product.CreateProductRequest;
 import Marketplace.business.dto.product.CreateProductResponse;
 import Marketplace.business.dto.product.UpdateProductRequest;
-import Marketplace.business.impl.ProductServiceImpl;
+import Marketplace.business.exception.InvalidRequestException;
+import Marketplace.business.validators.AmountValidator;
+import Marketplace.business.validators.EmailValidator;
+import Marketplace.business.validators.PhoneNumberValidator;
 import Marketplace.domain.Product;
 import Marketplace.domain.ProductAttribute;
 import Marketplace.persistence.converter.ProductConverter;
@@ -42,6 +45,12 @@ class ProductServiceImplTest {
     @Mock
     private ContactInformationRepository contactInformationRepository;
     @Mock
+    private AmountValidator amountValidator;
+    @Mock
+    private PhoneNumberValidator phoneNumberValidator;
+    @Mock
+    private EmailValidator emailValidator;
+    @Mock
     private AccessToken requestAccessToken;
     @InjectMocks
     private ProductServiceImpl productService;
@@ -79,6 +88,9 @@ class ProductServiceImplTest {
         when(requestAccessToken.getUserId()).thenReturn(1L);
         when(productRepository.save(any(ProductEntity.class))).thenReturn(savedProductEntity);
         when(categoryEntity.getAttributes()).thenReturn(attributeEntities);
+        when(amountValidator.isValid(anyDouble())).thenReturn(true);
+        when(phoneNumberValidator.isValid(anyString())).thenReturn(true);
+        when(emailValidator.isValid(anyString())).thenReturn(true);
 
         // When
         CreateProductResponse response = productService.createProduct(request);
@@ -115,6 +127,9 @@ class ProductServiceImplTest {
         // Given
         CreateProductRequest request = createValidProductRequest();
 
+        when(amountValidator.isValid(anyDouble())).thenReturn(true);
+        when(phoneNumberValidator.isValid(anyString())).thenReturn(true);
+        when(emailValidator.isValid(anyString())).thenReturn(true);
         when(categoryRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         // When & Then
@@ -132,6 +147,9 @@ class ProductServiceImplTest {
         CreateProductRequest request = createValidProductRequest();
 
         CategoryEntity categoryEntity = new CategoryEntity();
+        when(amountValidator.isValid(anyDouble())).thenReturn(true);
+        when(phoneNumberValidator.isValid(anyString())).thenReturn(true);
+        when(emailValidator.isValid(anyString())).thenReturn(true);
         when(categoryRepository.findById(anyLong())).thenReturn(Optional.of(categoryEntity));
         when(cityRepository.findById(anyLong())).thenReturn(Optional.empty());
 
@@ -152,6 +170,9 @@ class ProductServiceImplTest {
 
         CategoryEntity categoryEntity = new CategoryEntity();
         CityEntity cityEntity = new CityEntity();
+        when(amountValidator.isValid(anyDouble())).thenReturn(true);
+        when(phoneNumberValidator.isValid(anyString())).thenReturn(true);
+        when(emailValidator.isValid(anyString())).thenReturn(true);
         when(categoryRepository.findById(anyLong())).thenReturn(Optional.of(categoryEntity));
         when(cityRepository.findById(anyLong())).thenReturn(Optional.of(cityEntity));
         when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
@@ -177,6 +198,9 @@ class ProductServiceImplTest {
         UserEntity userEntity = new UserEntity();
         userEntity.setId(2L);
 
+        when(amountValidator.isValid(anyDouble())).thenReturn(true);
+        when(phoneNumberValidator.isValid(anyString())).thenReturn(true);
+        when(emailValidator.isValid(anyString())).thenReturn(true);
         when(categoryRepository.findById(anyLong())).thenReturn(Optional.of(categoryEntity));
         when(cityRepository.findById(anyLong())).thenReturn(Optional.of(cityEntity));
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(userEntity));
@@ -193,6 +217,63 @@ class ProductServiceImplTest {
         verify(requestAccessToken, times(3)).getUserId();
         verifyNoMoreInteractions(categoryRepository, cityRepository, userRepository, requestAccessToken);
         verifyNoInteractions(productRepository, productAttributeRepository, contactInformationRepository);
+    }
+
+    @Test
+    void testCreateProduct_withInvalidAmount_shouldThrowInvalidRequestException() {
+        // Given
+        CreateProductRequest request = createValidProductRequest();
+        request.setProductPrice(-1.0);
+
+        when(amountValidator.isValid(anyDouble())).thenReturn(false);
+
+        // When & Then
+        InvalidRequestException exception = assertThrows(InvalidRequestException.class, () -> productService.createProduct(request));
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
+
+        // Verify
+        verify(amountValidator, times(1)).isValid(request.getProductPrice());
+        verifyNoInteractions(categoryRepository, cityRepository, userRepository, productRepository, productAttributeRepository, contactInformationRepository);
+    }
+
+    @Test
+    void testCreateProduct_withInvalidPhoneNumber_shouldThrowInvalidRequestException() {
+        // Given
+        CreateProductRequest request = createValidProductRequest();
+        request.setPhone_number("invalid-phone");
+
+        when(amountValidator.isValid(anyDouble())).thenReturn(true);
+        when(phoneNumberValidator.isValid(anyString())).thenReturn(false);
+
+        // When & Then
+        InvalidRequestException exception = assertThrows(InvalidRequestException.class, () -> productService.createProduct(request));
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
+
+        // Verify
+        verify(amountValidator, times(1)).isValid(request.getProductPrice());
+        verify(phoneNumberValidator, times(1)).isValid(request.getPhone_number());
+        verifyNoInteractions(categoryRepository, cityRepository, userRepository, productRepository, productAttributeRepository, contactInformationRepository);
+    }
+
+    @Test
+    void testCreateProduct_withInvalidEmail_shouldThrowInvalidRequestException() {
+        // Given
+        CreateProductRequest request = createValidProductRequest();
+        request.setEmail("invalid-email");
+
+        when(amountValidator.isValid(anyDouble())).thenReturn(true);
+        when(phoneNumberValidator.isValid(anyString())).thenReturn(true);
+        when(emailValidator.isValid(anyString())).thenReturn(false);
+
+        // When & Then
+        InvalidRequestException exception = assertThrows(InvalidRequestException.class, () -> productService.createProduct(request));
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
+
+        // Verify
+        verify(amountValidator, times(1)).isValid(request.getProductPrice());
+        verify(phoneNumberValidator, times(1)).isValid(request.getPhone_number());
+        verify(emailValidator, times(1)).isValid(request.getEmail());
+        verifyNoInteractions(categoryRepository, cityRepository, userRepository, productRepository, productAttributeRepository, contactInformationRepository);
     }
 
     @Test
@@ -253,6 +334,9 @@ class ProductServiceImplTest {
         when(cityRepository.findById(request.getCityId())).thenReturn(Optional.of(cityEntity));
         when(userRepository.findById(1L)).thenReturn(Optional.of(userEntity));
         when(requestAccessToken.getUserId()).thenReturn(1L);
+        when(amountValidator.isValid(anyDouble())).thenReturn(true);
+        when(phoneNumberValidator.isValid(anyString())).thenReturn(true);
+        when(emailValidator.isValid(anyString())).thenReturn(true);
 
         // When
         productService.updateProduct(productId, request);
@@ -292,6 +376,9 @@ class ProductServiceImplTest {
         long productId = 1L;
         UpdateProductRequest request = createValidUpdateProductRequest();
 
+        when(amountValidator.isValid(anyDouble())).thenReturn(true);
+        when(phoneNumberValidator.isValid(anyString())).thenReturn(true);
+        when(emailValidator.isValid(anyString())).thenReturn(true);
         when(productRepository.findById(productId)).thenReturn(Optional.empty());
 
         // When & Then
@@ -312,6 +399,9 @@ class ProductServiceImplTest {
 
         ProductEntity existingProduct = new ProductEntity();
 
+        when(amountValidator.isValid(anyDouble())).thenReturn(true);
+        when(phoneNumberValidator.isValid(anyString())).thenReturn(true);
+        when(emailValidator.isValid(anyString())).thenReturn(true);
         when(productRepository.findById(productId)).thenReturn(Optional.of(existingProduct));
         when(cityRepository.findById(request.getCityId())).thenReturn(Optional.empty());
 
@@ -332,9 +422,13 @@ class ProductServiceImplTest {
         long productId = 1L;
         UpdateProductRequest request = createValidUpdateProductRequest();
 
+
         ProductEntity existingProduct = new ProductEntity();
         CityEntity cityEntity = new CityEntity();
 
+        when(amountValidator.isValid(anyDouble())).thenReturn(true);
+        when(phoneNumberValidator.isValid(anyString())).thenReturn(true);
+        when(emailValidator.isValid(anyString())).thenReturn(true);
         when(productRepository.findById(productId)).thenReturn(Optional.of(existingProduct));
         when(cityRepository.findById(request.getCityId())).thenReturn(Optional.of(cityEntity));
         when(userRepository.findById(requestAccessToken.getUserId())).thenReturn(Optional.empty());
@@ -362,6 +456,9 @@ class ProductServiceImplTest {
         userEntity.setId(2L);
         existingProduct.setContact_information(new ContactInformationEntity());
 
+        when(amountValidator.isValid(anyDouble())).thenReturn(true);
+        when(phoneNumberValidator.isValid(anyString())).thenReturn(true);
+        when(emailValidator.isValid(anyString())).thenReturn(true);
         when(productRepository.findById(productId)).thenReturn(Optional.of(existingProduct));
         when(cityRepository.findById(request.getCityId())).thenReturn(Optional.of(cityEntity));
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(userEntity));
@@ -389,14 +486,19 @@ class ProductServiceImplTest {
         CityEntity cityEntity = new CityEntity();
         UserEntity userEntity = new UserEntity();
         userEntity.setId(1L);
+        existingProduct.setUser(userEntity);
 
+        when(amountValidator.isValid(anyDouble())).thenReturn(true);
+        when(phoneNumberValidator.isValid(anyString())).thenReturn(true);
+        when(emailValidator.isValid(anyString())).thenReturn(true);
         when(productRepository.findById(productId)).thenReturn(Optional.of(existingProduct));
         when(cityRepository.findById(request.getCityId())).thenReturn(Optional.of(cityEntity));
-        when(userRepository.findById(requestAccessToken.getUserId())).thenReturn(Optional.of(userEntity));
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(userEntity));
         when(requestAccessToken.getUserId()).thenReturn(1L);
 
         // When & Then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> productService.updateProduct(productId, request));
+        assertEquals("Contact information not found", exception.getMessage());
 
         // Verify
         verify(productRepository, times(1)).findById(productId);
@@ -404,6 +506,67 @@ class ProductServiceImplTest {
         verify(userRepository, times(1)).findById(requestAccessToken.getUserId());
         verify(requestAccessToken, times(3)).getUserId();
         verifyNoMoreInteractions(productRepository, cityRepository, userRepository, requestAccessToken);
+    }
+
+    @Test
+    void testUpdateProduct_withInvalidAmount_shouldThrowInvalidRequestException() {
+        // Given
+        long productId = 1L;
+        UpdateProductRequest request = createValidUpdateProductRequest();
+        request.setProductPrice(-1.0);
+
+
+        when(amountValidator.isValid(anyDouble())).thenReturn(false);
+
+        // When & Then
+        InvalidRequestException exception = assertThrows(InvalidRequestException.class, () -> productService.updateProduct(productId, request));
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
+
+        // Verify
+        verify(amountValidator, times(1)).isValid(request.getProductPrice());
+        verifyNoInteractions(productRepository, cityRepository, userRepository);
+    }
+
+    @Test
+    void testUpdateProduct_withInvalidPhoneNumber_shouldThrowInvalidRequestException() {
+        // Given
+        long productId = 1L;
+        UpdateProductRequest request = createValidUpdateProductRequest();
+        request.setPhone_number("invalid-phone");
+
+        when(amountValidator.isValid(anyDouble())).thenReturn(true);
+        when(phoneNumberValidator.isValid(anyString())).thenReturn(false);
+
+        // When & Then
+        InvalidRequestException exception = assertThrows(InvalidRequestException.class, () -> productService.updateProduct(productId, request));
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
+
+        // Verify
+        verify(amountValidator, times(1)).isValid(request.getProductPrice());
+        verify(phoneNumberValidator, times(1)).isValid(request.getPhone_number());
+        verifyNoInteractions(productRepository, cityRepository, userRepository);
+    }
+
+    @Test
+    void testUpdateProduct_withInvalidEmail_shouldThrowInvalidRequestException() {
+        // Given
+        long productId = 1L;
+        UpdateProductRequest request = createValidUpdateProductRequest();
+        request.setEmail("invalid-email");
+
+        when(amountValidator.isValid(anyDouble())).thenReturn(true);
+        when(phoneNumberValidator.isValid(anyString())).thenReturn(true);
+        when(emailValidator.isValid(anyString())).thenReturn(false);
+
+        // When & Then
+        InvalidRequestException exception = assertThrows(InvalidRequestException.class, () -> productService.updateProduct(productId, request));
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
+
+        // Verify
+        verify(amountValidator, times(1)).isValid(request.getProductPrice());
+        verify(phoneNumberValidator, times(1)).isValid(request.getPhone_number());
+        verify(emailValidator, times(1)).isValid(request.getEmail());
+        verifyNoInteractions(productRepository, cityRepository, userRepository);
     }
 
     @Test

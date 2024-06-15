@@ -3,6 +3,7 @@ package Marketplace.business.impl;
 import Marketplace.business.CategoryService;
 import Marketplace.business.dto.category.CreateCategoryRequest;
 import Marketplace.business.dto.category.CreateCategoryResponse;
+import Marketplace.business.exception.DuplicateCategoryNameException;
 import Marketplace.business.exception.UnauthorizedDataAccessException;
 import Marketplace.config.security.token.AccessToken;
 import Marketplace.domain.Category;
@@ -37,9 +38,16 @@ CategoryServiceImpl implements CategoryService {
         if (request == null) {
             return null;
         }
+
+
         if (!requestAccessToken.hasRole("ADMIN")){
             throw new UnauthorizedDataAccessException("USER_ID_NOT_FROM_LOGGED_IN_USER");
         }
+
+        if(categoryRepository.findByName(request.getCategoryName()).isPresent()){
+            throw new DuplicateCategoryNameException("This category name already exists.");
+        }
+
         CategoryEntity categoryEntity = CategoryEntity.builder()
                 .name(request.getCategoryName())
                 .build();

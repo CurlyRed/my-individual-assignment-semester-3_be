@@ -1,9 +1,8 @@
-package Marketplace.business;
+package Marketplace.business.impl;
 
 import Marketplace.business.dto.authentication.LoginRequest;
 import Marketplace.business.dto.authentication.LoginResponse;
 import Marketplace.business.exception.InvalidCredentialsException;
-import Marketplace.business.impl.AuthenticationServiceImpl;
 import Marketplace.config.security.token.AccessToken;
 import Marketplace.config.security.token.AccessTokenEncoder;
 import Marketplace.persistence.entity.UserEntity;

@@ -6,6 +6,7 @@ import Marketplace.persistence.entity.UserEntity;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -30,10 +31,11 @@ public class UserConverter {
                 .date_of_registry(userEntity.getDate_of_registry())
                 .userInformation(userInformationConverter.toDomain(userEntity.getUserInformation()))
                 .role(roleConverter.toDomain(userEntity.getRole()))
-                .products(userEntity.getProducts().stream()
-                        .map(productConverter::toDomain)
-                        .filter(Objects::nonNull)
-                        .collect(Collectors.toList()))
+                .products(userEntity.getProducts() == null ? Collections.emptyList() :
+                        userEntity.getProducts().stream()
+                                .map(productConverter::toDomain)
+                                .filter(Objects::nonNull)
+                                .collect(Collectors.toList()))
                 .balance(userBalanceConverter.toDomain(userEntity.getUser_balance()))
                 .build();
     }

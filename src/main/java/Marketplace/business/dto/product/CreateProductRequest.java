@@ -1,13 +1,11 @@
 package Marketplace.business.dto.product;
 
 import Marketplace.domain.ProductAttribute;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
 import java.util.Date;
 import java.util.List;

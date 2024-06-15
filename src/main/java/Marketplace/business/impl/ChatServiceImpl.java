@@ -41,18 +41,17 @@ public class ChatServiceImpl implements ChatService {
     private final MessageConverter messageConverter;
     private SimpMessagingTemplate messagingTemplate;
 
+    private static final String CHAT_NOT_FOUND_MESSAGE = "Chat not found";
+
     @Override
     public void sendMessage(MessageRequest messageRequest) {
         if (messageRequest == null) {
             throw new InvalidRequestException("Message cannot be null");
         }
 
-        log.info("Received message request: {}", messageRequest);
-
         ChatEntity chat = chatRepository.findById(messageRequest.getChatId())
-                .orElseThrow(() -> new RuntimeException("Chat not found"));
+                .orElseThrow(() -> new RuntimeException(CHAT_NOT_FOUND_MESSAGE));
 
-        // Create and save the message
         MessageEntity message = MessageEntity.builder()
                 .chat(chat)
                 .sender(userRepository.findById(messageRequest.getSenderId())
@@ -62,19 +61,13 @@ public class ChatServiceImpl implements ChatService {
                 .build();
 
         messageRepository.save(message);
-        log.info("Message saved with content: {}", message.getContent());
 
-        // Convert and send the message to the appropriate topic
         Message domainMessage = messageConverter.toDomain(message);
         messagingTemplate.convertAndSend("/topic/chat/" + chat.getId(), domainMessage);
-
-        log.info("Message sent to topic /topic/chat/{}", chat.getId());
     }
 
     @Override
     public Chat createChat(Long buyerId, Long sellerId, Long productId) {
-        log.info("Creating a new chat for buyerId: {}, sellerId: {}, productId: {}",
-                buyerId, sellerId, productId);
 
         UserEntity buyer = userRepository.findById(buyerId)
                 .orElseThrow(() -> new RuntimeException("Buyer not found"));
@@ -91,7 +84,6 @@ public class ChatServiceImpl implements ChatService {
                 .deleted(false)
                 .build();
         chat = chatRepository.save(chat);
-        log.info("New chat created with id: {}", chat.getId());
 
         return chatConverter.toDomain(chat);
     }
@@ -105,7 +97,7 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public void deleteChat(long chatId) {
-        ChatEntity chat = chatRepository.findById(chatId).orElseThrow(() -> new RuntimeException("Chat not found"));
+        ChatEntity chat = chatRepository.findById(chatId).orElseThrow(() -> new RuntimeException(CHAT_NOT_FOUND_MESSAGE));
         long requesterId = requestAccessToken.getUserId();
 
         if (chat.getBuyer().getId() != requesterId && chat.getSeller().getId() != requesterId) {
@@ -118,7 +110,7 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public void recoverChat(long chatId) {
-        ChatEntity chat = chatRepository.findById(chatId).orElseThrow(() -> new RuntimeException("Chat not found"));
+        ChatEntity chat = chatRepository.findById(chatId).orElseThrow(() -> new RuntimeException(CHAT_NOT_FOUND_MESSAGE));
         long requesterId = requestAccessToken.getUserId();
 
         if (chat.getBuyer().getId() != requesterId && chat.getSeller().getId() != requesterId) {

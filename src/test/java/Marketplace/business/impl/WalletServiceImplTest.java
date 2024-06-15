@@ -1,13 +1,14 @@
-package Marketplace.business;
+package Marketplace.business.impl;
 
 import Marketplace.business.dto.walletOperations.PurchasePromotionRequest;
 import Marketplace.business.dto.walletOperations.TopUpRequest;
 import Marketplace.business.exception.InsufficientBalanceException;
 import Marketplace.business.exception.InvalidRequestException;
-import Marketplace.business.impl.WalletServiceImpl;
 import Marketplace.config.security.token.AccessToken;
+import Marketplace.enums.TransactionType;
 import Marketplace.persistence.entity.*;
 import Marketplace.persistence.jpaRepository.*;
+import Marketplace.business.validators.AmountValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -34,6 +35,8 @@ class WalletServiceImplTest {
     @Mock
     private TransactionRepository transactionRepository;
     @Mock
+    private AmountValidator amountValidator;
+    @Mock
     private AccessToken requestAccessToken;
     @InjectMocks
     private WalletServiceImpl walletService;
@@ -41,6 +44,27 @@ class WalletServiceImplTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
+    }
+
+    private TopUpRequest createTopUpRequest(Double amount) {
+        return TopUpRequest.builder().amount(amount).build();
+    }
+
+    private PurchasePromotionRequest createPurchasePromotionRequest(Double amount, Long productId) {
+        return PurchasePromotionRequest.builder().amount(amount).productId(productId).build();
+    }
+
+    private UserBalanceEntity createUserBalanceEntity(Long userId, Double balance) {
+        UserEntity user = UserEntity.builder().id(userId).build();
+        return UserBalanceEntity.builder().user(user).balance(balance).last_update(new Date()).build();
+    }
+
+    private ProductEntity createProductEntity(Long productId) {
+        return ProductEntity.builder().id(productId).promoted(false).build();
+    }
+
+    private AppBalanceEntity createAppBalanceEntity(Long id, Double balance) {
+        return AppBalanceEntity.builder().id(id).balance(balance).last_update(new Date()).build();
     }
 
     @Test
@@ -51,6 +75,7 @@ class WalletServiceImplTest {
         UserBalanceEntity userBalance = createUserBalanceEntity(userId, 50.0);
 
         when(requestAccessToken.getUserId()).thenReturn(userId);
+        when(amountValidator.isValid(amount)).thenReturn(true);
         when(userBalanceRepository.findByUserId(userId)).thenReturn(userBalance);
 
         TopUpRequest request = createTopUpRequest(amount);
@@ -68,9 +93,7 @@ class WalletServiceImplTest {
 
     @Test
     void topUp_withNullRequest_shouldThrowInvalidRequestException() {
-        // Given
-        // When
-        // Then
+        // When & Then
         assertThrows(InvalidRequestException.class, () -> walletService.topUp(null));
 
         // Verify
@@ -82,13 +105,13 @@ class WalletServiceImplTest {
         // Given
         Long userId = 1L;
         when(requestAccessToken.getUserId()).thenReturn(userId);
+        when(amountValidator.isValid(anyDouble())).thenReturn(true);
         when(userBalanceRepository.findByUserId(userId)).thenReturn(null);
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
         TopUpRequest request = createTopUpRequest(100.0);
 
-        // When
-        // Then
+        // When & Then
         assertThrows(IllegalArgumentException.class, () -> walletService.topUp(request));
 
         // Verify
@@ -106,12 +129,12 @@ class WalletServiceImplTest {
 
         UserBalanceEntity userBalance = createUserBalanceEntity(userId, 150.0);
         ProductEntity product = createProductEntity(productId);
-        AppBalanceEntity appBalance = createAppBalanceEntity(1L, 200.0); // Properly initialized
+        AppBalanceEntity appBalance = createAppBalanceEntity(1L, 200.0);
 
         when(requestAccessToken.getUserId()).thenReturn(userId);
         when(userBalanceRepository.findByUserId(userId)).thenReturn(userBalance);
         when(productRepository.findById(productId)).thenReturn(Optional.of(product));
-        when(appBalanceRepository.findById(1)).thenReturn(Optional.of(appBalance)); // Return initialized appBalance
+        when(appBalanceRepository.findById(1)).thenReturn(Optional.of(appBalance));
 
         PurchasePromotionRequest request = createPurchasePromotionRequest(amount, productId);
 
@@ -131,9 +154,7 @@ class WalletServiceImplTest {
 
     @Test
     void purchasePromotion_withNullRequest_shouldThrowInvalidRequestException() {
-        // Given
-        // When
-        // Then
+        // When & Then
         assertThrows(InvalidRequestException.class, () -> walletService.purchasePromotion(null));
 
         // Verify
@@ -149,8 +170,7 @@ class WalletServiceImplTest {
 
         PurchasePromotionRequest request = createPurchasePromotionRequest(100.0, 1L);
 
-        // When
-        // Then
+        // When & Then
         assertThrows(IllegalArgumentException.class, () -> walletService.purchasePromotion(request));
 
         // Verify
@@ -173,8 +193,7 @@ class WalletServiceImplTest {
 
         PurchasePromotionRequest request = createPurchasePromotionRequest(amount, productId);
 
-        // When
-        // Then
+        // When & Then
         assertThrows(InsufficientBalanceException.class, () -> walletService.purchasePromotion(request));
 
         // Verify
@@ -198,48 +217,11 @@ class WalletServiceImplTest {
 
         PurchasePromotionRequest request = createPurchasePromotionRequest(amount, productId);
 
-        // When
-        // Then
+        // When & Then
         assertThrows(IllegalArgumentException.class, () -> walletService.purchasePromotion(request));
 
         // Verify
         verify(userBalanceRepository, times(1)).findByUserId(userId);
         verify(productRepository, times(1)).findById(productId);
     }
-
-    private TopUpRequest createTopUpRequest(Double amount) {
-        TopUpRequest request = new TopUpRequest();
-        request.setAmount(amount);
-        return request;
-    }
-
-    private PurchasePromotionRequest createPurchasePromotionRequest(Double amount, Long productId) {
-        PurchasePromotionRequest request = new PurchasePromotionRequest();
-        request.setAmount(amount);
-        request.setProductId(productId);
-        return request;
-    }
-
-    private UserBalanceEntity createUserBalanceEntity(Long userId, Double balance) {
-        UserEntity user = new UserEntity();
-        user.setId(userId);
-        UserBalanceEntity userBalance = new UserBalanceEntity();
-        userBalance.setUser(user);
-        userBalance.setBalance(balance);
-        return userBalance;
-    }
-
-    private ProductEntity createProductEntity(Long productId) {
-        ProductEntity product = new ProductEntity();
-        product.setId(productId);
-        product.setPromoted(false);
-        return product;
-    }
-
-    private AppBalanceEntity createAppBalanceEntity(Long id, Double balance) {
-        AppBalanceEntity appBalance = new AppBalanceEntity();
-        appBalance.setId(id);
-        appBalance.setBalance(balance);
-        appBalance.setLast_update(new Date());
-        return appBalance;
-    }}
+}

@@ -5,13 +5,16 @@ import Marketplace.business.dto.walletOperations.PurchasePromotionRequest;
 import Marketplace.business.dto.walletOperations.TopUpRequest;
 import Marketplace.business.exception.InsufficientBalanceException;
 import Marketplace.business.exception.InvalidRequestException;
+import Marketplace.business.validators.AmountValidator;
 import Marketplace.config.security.token.AccessToken;
 import Marketplace.enums.TransactionType;
 import Marketplace.persistence.entity.*;
 import Marketplace.persistence.jpaRepository.*;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.Date;
 import java.util.Optional;
@@ -25,6 +28,7 @@ public class WalletServiceImpl implements WalletService {
     private final AppBalanceRepository appBalanceRepository;
     private final ProductRepository productRepository;
     private final TransactionRepository transactionRepository;
+    private final AmountValidator amountValidator;
     private final AccessToken requestAccessToken;
 
     @Override
@@ -37,6 +41,10 @@ public class WalletServiceImpl implements WalletService {
         Long userId = requestAccessToken.getUserId();
         if (userId == null) {
             throw new IllegalArgumentException("Invalid access token: USER ID NOT FOUND");
+        }
+
+        if (!amountValidator.isValid(request.getAmount())) {
+            throw new InvalidRequestException("Amount should be greater than zero.");
         }
 
         UserBalanceEntity userBalance = userBalanceRepository.findByUserId(userId);

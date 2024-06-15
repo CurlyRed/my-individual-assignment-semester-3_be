@@ -16,7 +16,6 @@ import jakarta.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UpdateCategoryRequest {
-
     @NotNull
     private long id;
     @NotNull

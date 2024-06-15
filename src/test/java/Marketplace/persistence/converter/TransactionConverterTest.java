@@ -6,6 +6,8 @@ import Marketplace.persistence.entity.TransactionEntity;
 import Marketplace.persistence.entity.UserEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.util.Date;
 
@@ -14,13 +16,16 @@ import static org.mockito.Mockito.*;
 
 class TransactionConverterTest {
 
+    @Mock
     private TransactionConverter transactionConverter;
+    @Mock
     private UserConverter userConverter;
+    @Mock
     private ProductConverter productConverter;
 
     @BeforeEach
     void setUp() {
-        userConverter = mock(UserConverter.class);
+        MockitoAnnotations.initMocks(this);
         transactionConverter = new TransactionConverter(userConverter, productConverter);
     }
 

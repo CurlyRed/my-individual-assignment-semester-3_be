@@ -1,7 +1,6 @@
 package Marketplace.persistence.converter;
 
 import Marketplace.domain.UserInformation;
-import Marketplace.enums.Gender;
 import Marketplace.persistence.entity.UserInformationEntity;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -26,3 +25,4 @@ public class UserInformationConverter {
                 .build();
     }
 }
+

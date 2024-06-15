@@ -22,6 +22,5 @@ public class CreateCategoryRequest {
     private String categoryName;
     @NotNull
     private List<Attribute> attributes;
-
 }
 
