@@ -40,6 +40,12 @@ deploy:
   script:
     - |
       if [[ "$CI_COMMIT_BRANCH" == "main" ]]; then
+        # Stop and remove existing container if it exists
+        if [ "$(docker ps -q -f name=ias3_container_be)" ]; then
+          docker stop ias3_container_be
+          docker rm ias3_container_be
+        fi
+        # Build and run the new container
         docker build -t ias3_be .
         docker run -d -p 8000:8080 --name ias3_container_be ias3_be
       else
@@ -47,6 +53,7 @@ deploy:
       fi
   only:
     - main
+
 
 
 
