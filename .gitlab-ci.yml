@@ -42,17 +42,21 @@ deploy:
       if [[ "$CI_COMMIT_BRANCH" == "main" ]]; then
         # Stop and remove existing container if it exists
         if [ "$(docker ps -q -f name=ias3_container_be)" ]; then
-          docker stop ias3_container_be
-          docker rm ias3_container_be
+          docker stop ias3_container_be || true
+          sleep 5
+          docker rm ias3_container_be || true
+          sleep 5
         fi
-        # Build and run the new container
+        # Build the new image
         docker build -t ias3_be .
+        # Run the new container
         docker run -d -p 8000:8080 --name ias3_container_be ias3_be
       else
         echo "Skipping deployment as the pipeline was not triggered by the main branch."
       fi
   only:
     - main
+
 
 
 
