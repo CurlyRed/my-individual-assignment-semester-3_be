@@ -24,6 +24,7 @@ import Marketplace.persistence.entity.UserEntity;
 
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,7 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
@@ -105,15 +107,16 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public boolean updateUser(UpdateUserRequest request) {
+        log.info("Request to update user: {}", request);
         if (!Objects.equals(requestAccessToken.getUserId(), request.getUserId())) {
             throw new UnauthorizedDataAccessException("USER_ID_NOT_FROM_LOGGED_IN_USER");
         }
 
-        if(!amountValidator.isValid(Double.valueOf(request.getAge()))){
+        if(request.getAge() != null && !amountValidator.isValid(Double.valueOf(request.getAge()))){
             throw new InvalidRequestException("Invalid age, please try again.");
         }
 
-        if(!passwordValidator.isValid(request.getPassword())) {
+        if(request.getPassword() != null && !passwordValidator.isValid(request.getPassword())) {
             throw new InvalidRequestException("Invalid password.");
         }
 
