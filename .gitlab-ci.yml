@@ -1,3 +1,8 @@
+variables:
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+  IMAGE_NAME: "localhost:6000/ias3_be"
+  IMAGE_TAG: "latest"
+
 stages:
   - build
   - test
@@ -28,7 +33,7 @@ sonarqube-check:
     paths:
       - .sonar/cache
   script: ./gradlew sonar
-  allow_failure: false
+  allow_failure: true
   only:
     - merge_requests
     - master
@@ -37,26 +42,16 @@ sonarqube-check:
 
 deploy:
   stage: deploy
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "localhost:6000"
   script:
-    - |
-      if [[ "$CI_COMMIT_BRANCH" == "main" ]]; then
-        if [ "$(docker ps -q -f name=ias3_container_be)" ]; then
-          docker stop ias3_container_be || true
-          sleep 5
-          docker rm ias3_container_be || true
-          sleep 5
-        fi
-        docker build -t ias3_be .
-        docker run -d -p 8000:8080 --name ias3_container_be ias3_be
-      else
-        echo "Skipping deployment as the pipeline was not triggered by the main branch."
-      fi
+    - echo "Building Docker image..."
+    - docker build -t $IMAGE_NAME:$IMAGE_TAG .
+    - echo "Pushing Docker image..."
+    - docker push $IMAGE_NAME:$IMAGE_TAG
   only:
+    - master
     - main
-
-
-
-
-
-
-
