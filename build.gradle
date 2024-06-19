@@ -31,21 +31,18 @@ dependencies {
     implementation 'org.flywaydb:flyway-mysql'
     implementation 'mysql:mysql-connector-java:8.0.33'
     implementation 'javax.validation:validation-api:2.0.1.Final'
-    implementation 'org.hibernate.validator:hibernate-validator:6.1.5.Final'
     implementation 'org.glassfish:javax.el:3.0.0'
 
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
     compileOnly 'org.projectlombok:lombok'
-
     annotationProcessor 'org.projectlombok:lombok'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation platform('org.junit:junit-bom:5.9.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testImplementation 'org.springframework.cloud:spring-cloud-starter-bootstrap:4.0.4'
-    testImplementation 'org.testcontainers:testcontainers:1.16.3'
     testImplementation 'com.playtika.testcontainers:embedded-mysql:3.0.0-RC9'
     testImplementation 'org.springframework.security:spring-security-test'
 }
